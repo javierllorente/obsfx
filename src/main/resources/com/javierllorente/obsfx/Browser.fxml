@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.textfield.TextFields?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane fx:id="borderPane" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javierllorente.obsfx.BrowserController">
+    <left>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="300.0">
+            <children>
+                <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <TextFields fx:id="packageFilter" fx:factory="createClearableTextField" promptText="%packages.filter" >
+                            <VBox.margin>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            </VBox.margin>
+                        </TextFields>
+                        <ListView fx:id="packagesListView" VBox.vgrow="ALWAYS" />
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+    </left>
+   <center>
+      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="398.0" prefWidth="416.0" BorderPane.alignment="CENTER">
+        <items>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                <children>
+                    <TabPane fx:id="tabPane" layoutX="25.0" layoutY="-3.0" prefHeight="194.0" prefWidth="414.0" side="TOP" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <tabs>
+                            <Tab text="%tab.overview">
+                                <content>
+                                    <fx:include fx:id="overview" source="Overview.fxml"/>
+                                </content>
+                            </Tab>
+                            <Tab text="%tab.files">
+                                <content>
+                                    <fx:include fx:id="files" source="Files.fxml"/>
+                                </content>
+                            </Tab>
+                            <Tab text="%tab.revisions">
+                                <content>
+                                    <fx:include fx:id="revisions" source="Revisions.fxml"/>
+                                </content>
+                            </Tab>
+                            <Tab text="%tab.requests">
+                                <content>
+                                    <fx:include fx:id="requests" source="Requests.fxml"/>
+                                </content>
+                            </Tab>
+                        </tabs>
+                    </TabPane>
+                </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </center>
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" text="%menu.file">
+                  <items>
+                      <MenuItem mnemonicParsing="false" onAction="#handleLogin" text="%menu.login" />
+                      <MenuItem accelerator="Shortcut+Q" mnemonicParsing="false" onAction="#handleExit" text="%menu.exit" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="%menu.edit">
+                  <items>
+                      <MenuItem mnemonicParsing="false" onAction="#handleSettings" text="%menu.settings" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="%menu.help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#handleShortcuts" text="%shortcuts" />
+                    <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="%menu.about" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <ToolBar prefHeight="50.0" prefWidth="200.0">
+                <items>
+                    <Button fx:id="homeButton" mnemonicParsing="false" onAction="#goHome" text="%bar.home">
+                        <graphic>
+                            <FontIcon iconLiteral="icm-home" />
+                        </graphic>
+                    </Button>
+                    <fx:include fx:id="bookmarks" source="Bookmarks.fxml" />
+                    <TextFields fx:id="locationTextField" fx:factory="createClearableTextField" onKeyPressed="#handleNavigation" prefWidth="350.0" promptText="%bar.location"/>
+                    <Pane HBox.hgrow="ALWAYS" />
+                    <ProgressIndicator fx:id="progressIndicator" prefHeight="15.0" prefWidth="15.0" visible="false" />
+                </items>
+            </ToolBar>
+         </children>
+      </VBox>
+   </top>
+</BorderPane>

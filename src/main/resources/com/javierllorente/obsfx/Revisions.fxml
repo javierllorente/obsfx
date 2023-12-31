@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javierllorente.obsfx.RevisionsController">
+    <children>
+        <TableView fx:id="revisionsTable" layoutX="87.0" layoutY="-9.0" prefHeight="161.0" prefWidth="425.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <placeholder>
+                <Label text="" />
+            </placeholder>
+            <columns>
+                <TableColumn minWidth="0.0" prefWidth="50.0" text="%revisions.rev" sortType="DESCENDING" />
+                <TableColumn prefWidth="130.0" text="%revisions.date" />
+                <TableColumn prefWidth="140.0" text="%revisions.user" />
+                <TableColumn prefWidth="450.0" text="%revisions.comments" />
+            </columns>
+        </TableView>
+    </children>
+</AnchorPane>

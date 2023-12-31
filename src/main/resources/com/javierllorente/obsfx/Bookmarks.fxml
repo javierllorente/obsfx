@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<MenuButton fx:id="bookmarksButton" mnemonicParsing="false" text="%bar.bookmarks" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javierllorente.obsfx.BookmarksController">
+    <graphic>
+        <FontIcon iconLiteral="icm-bookmarks" />
+    </graphic>
+    <items>
+        <MenuItem fx:id="addBookmarkItem" mnemonicParsing="false" text="%bookmarks.add" visible="false" />
+        <MenuItem fx:id="deleteBookmarkItem" mnemonicParsing="false" text="%bookmarks.delete" visible="false" />
+        <SeparatorMenuItem fx:id="bookmarkSeparator" mnemonicParsing="false" visible="false" />
+        <MenuItem fx:id="emptyBookmarkItem" mnemonicParsing="false" text="%bookmarks.empty" disable="true" />
+    </items>
+</MenuButton>

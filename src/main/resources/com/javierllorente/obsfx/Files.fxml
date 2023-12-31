@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javierllorente.obsfx.FilesController">
+    <children>
+        <TableView fx:id="filesTable" layoutX="87.0" layoutY="-9.0" prefHeight="161.0" prefWidth="425.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <placeholder>
+                <Label text="" />
+            </placeholder>
+            <columns>
+                <TableColumn prefWidth="315.0" text="%files.filename" />
+                <TableColumn minWidth="0.0" prefWidth="70.0" text="%files.size" />
+                <TableColumn prefWidth="215.0" text="%files.modifiedtime" />
+            </columns>
+        </TableView>
+    </children>
+</AnchorPane>
