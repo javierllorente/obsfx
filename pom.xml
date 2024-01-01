@@ -70,11 +70,6 @@
                 <version>3.11.0</version>
                 <configuration>
                     <release>17</release>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.javierllorente.obsfx.App</mainClass>
-                        </manifest>
-                    </archive>
                 </configuration>
             </plugin>
             <plugin>
