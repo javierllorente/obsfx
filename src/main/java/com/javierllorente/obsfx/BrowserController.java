@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import com.javierllorente.obsfx.alert.ExceptionAlert;
 import com.javierllorente.obsfx.alert.ShortcutsAlert;
 import com.javierllorente.obsfx.dialog.LoginDialog;
 import com.javierllorente.obsfx.dialog.SettingsDialog;
+import com.javierllorente.obsfx.task.BuildLogTask;
 import com.javierllorente.obsfx.task.FilesTask;
 import com.javierllorente.obsfx.task.PackagesTask;
 import com.javierllorente.obsfx.task.PkgMetaConfigTask;
@@ -277,6 +278,8 @@ public class BrowserController implements Initializable {
                 KeyCombination.CONTROL_DOWN);
         KeyCombination bookmarksShortcut = new KeyCodeCombination(KeyCode.B,
                 KeyCombination.CONTROL_DOWN);
+        KeyCombination viewLogShortcut = new KeyCodeCombination(KeyCode.G,
+                KeyCombination.CONTROL_DOWN);
         KeyCombination refreshShortcut = new KeyCodeCombination(KeyCode.R,
                 KeyCombination.CONTROL_DOWN);
         KeyCombination switchTabsShortcut = new KeyCodeCombination(KeyCode.T,
@@ -292,6 +295,15 @@ public class BrowserController implements Initializable {
                 },
                 bookmarksShortcut, () -> {
                     bookmarksController.showBookmarks();
+                },
+                viewLogShortcut, () -> {
+                    if (!App.getOBS().isAuthenticated()) {
+                        showNotAuthenticatedAlert();
+                        return;
+                    }
+                    if (overviewController.isBuildResultSelected()) {
+                        overviewController.handleViewLog();
+                    }
                 },
                 refreshShortcut, () -> {
                     if (!App.getOBS().isAuthenticated()) {
@@ -333,6 +345,20 @@ public class BrowserController implements Initializable {
         });
     }
 
+    public void startBuildLogTask(String prj, String repository, String arch, String pkg) {
+        BuildLogTask buildLogTask = new BuildLogTask(prj, repository, arch, pkg);
+        progressIndicator.setVisible(true);
+        new Thread(buildLogTask).start();
+        buildLogTask.setOnSucceeded((e) -> {
+            overviewController.setBuildLog(buildLogTask.getValue());
+            progressIndicator.setVisible(false);
+        });
+        buildLogTask.setOnFailed((t) -> {
+            progressIndicator.setVisible(false);
+            showExceptionAlert(buildLogTask.getException());
+        });
+    }
+        
     private void startLatestRevisionTask(String prj, String pkg) {
         RevisionsTask latestRevisionsTask = new RevisionsTask(prj, pkg, true);
         progressIndicator.setVisible(true);
@@ -683,7 +709,7 @@ public class BrowserController implements Initializable {
         });
     }
     
-    private void showExceptionAlert(Throwable throwable) {
+    public void showExceptionAlert(Throwable throwable) {
         progressIndicator.setVisible(false);
         ExceptionAlert exceptionAlert = new ExceptionAlert(borderPane.getScene().getWindow());
         exceptionAlert.setHeader(throwable.getMessage());        

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,21 @@ package com.javierllorente.obsfx;
 import com.javierllorente.jobs.entity.OBSPkgMetaConfig;
 import com.javierllorente.jobs.entity.OBSResult;
 import com.javierllorente.jobs.entity.OBSRevision;
+import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -34,7 +40,9 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 /**
@@ -52,6 +60,9 @@ public class OverviewController implements Initializable {
     
     @FXML
     private Label description;
+    
+    @FXML
+    private Button viewLogButton;
     
     @FXML
     private Button refreshButton;
@@ -72,6 +83,7 @@ public class OverviewController implements Initializable {
     StringProperty packageProperty;
     private final SimpleDateFormat dateFormat;
     private BrowserController browserController;
+    private LogViewerController logViewerController;
 
     public OverviewController() {
         dateFormat = new SimpleDateFormat("dd-MM-yyyy, HH:mm:ss");
@@ -88,6 +100,8 @@ public class OverviewController implements Initializable {
         projectProperty = new SimpleStringProperty();
         packageProperty = new SimpleStringProperty();
         
+        viewLogButton.disableProperty().bind(packageProperty.isNull()
+                .or(buildResultsTable.getSelectionModel().selectedItemProperty().isNull()));        
         refreshButton.disableProperty().bind((packageProperty.isNull()));
         downloadButton.disableProperty().bind(packageProperty.isNull());
         link.managedProperty().bind(link.textProperty().isNotEmpty());
@@ -123,6 +137,10 @@ public class OverviewController implements Initializable {
         projectProperty.set(pkgMetaConfig.getProject());        
     }
     
+    public void setBuildLog(String buildLog) {
+        logViewerController.setText(buildLog);
+    }
+    
     public void setLatestRevision(OBSRevision revision) {
         latestRevision.setText(dateFormat.format(revision.getTime()));
         historyIcon.setVisible(true);
@@ -131,6 +149,31 @@ public class OverviewController implements Initializable {
     public void clearLatestRevision() {
         latestRevision.setText(null);
         historyIcon.setVisible(false);
+    }
+    
+    public boolean isBuildResultSelected() {
+        return (buildResultsTable.getSelectionModel().getSelectedIndex() != -1);
+    }
+    
+    @FXML
+    public void handleViewLog() {
+        try {
+            FXMLLoader fXMLLoader = App.getFXMLLoader("LogViewer");
+            Scene scene = new Scene(fXMLLoader.load(), 800, 600);
+            logViewerController = fXMLLoader.getController();
+            Stage stage = new Stage();
+            stage.getIcons().add(new Image(App.class.getResourceAsStream(App.ICON)));
+            stage.setTitle(App.NAME + " - " + MessageFormat.format(App.getBundle()
+                    .getString("logviewer.title"), packageProperty.get()));
+            stage.setScene(scene);
+            stage.show();
+            OBSResult result = buildResultsTable.getSelectionModel().getSelectedItem();
+            browserController.startBuildLogTask(result.getProject(), result.getRepository(),
+                    result.getArch(), packageProperty.get());
+        } catch (IOException | RuntimeException ex) {
+            browserController.showExceptionAlert(ex);
+            Logger.getLogger(OverviewController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     @FXML

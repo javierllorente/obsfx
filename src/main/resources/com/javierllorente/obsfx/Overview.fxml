@@ -30,6 +30,11 @@
                <children>
                     <HBox alignment="BASELINE_RIGHT" prefHeight="50.0" prefWidth="200.0" spacing="5.0">
                         <children>
+                            <Button fx:id="viewLogButton" mnemonicParsing="false" onAction="#handleViewLog">
+                                <graphic>
+                                    <FontIcon iconLiteral="icm-book" iconSize="12" />
+                                </graphic>
+                            </Button>
                             <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#handleRefresh">
                                 <graphic>
                                     <FontIcon iconLiteral="icm-loop2" iconSize="12" />

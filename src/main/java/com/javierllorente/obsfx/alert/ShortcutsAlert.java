@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2022-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class ShortcutsAlert extends Alert {
     public ShortcutsAlert(Window window) {
         super(AlertType.INFORMATION);
         initOwner(window);
-        getDialogPane().setPrefSize(375, 280);
+        getDialogPane().setPrefSize(375, 310);
         setTitle(App.getBundle().getString("shortcuts"));
         setHeaderText(App.getBundle().getString("keyboard_shortcuts"));
         
@@ -70,6 +70,8 @@ public class ShortcutsAlert extends Alert {
                         "Ctrl + P"),
                 new AbstractMap.SimpleEntry<>(App.getBundle().getString("shortcuts.bookmarks"),
                         "Ctrl + B"),
+                new AbstractMap.SimpleEntry<>(App.getBundle().getString("shortcuts.view_log"),
+                        "Ctrl + G"),
                 new AbstractMap.SimpleEntry<>(App.getBundle().getString("shortcuts.refresh"),
                         "Ctrl + R"),
                 new AbstractMap.SimpleEntry<>(App.getBundle().getString("shortcuts.download"),

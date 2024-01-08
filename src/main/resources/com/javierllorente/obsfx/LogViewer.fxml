@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javierllorente.obsfx.LogViewerController">
+   <children>
+      <TextArea fx:id="textArea" editable="false" VBox.vgrow="ALWAYS" />
+      <HBox>
+         <children>
+            <TextField fx:id="searchTextField" prefWidth="300.0" />
+            <Button fx:id="previousButton" mnemonicParsing="true" onAction="#findPrevious" text="%logviewer.previous" />
+            <Button fx:id="nextButton" mnemonicParsing="true" onAction="#findNext" text="%logviewer.next" />
+            <Label fx:id="notFoundLabel" prefHeight="20.0" text="%logviewer.notfound" visible="false">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
+   </children>
+</VBox>
