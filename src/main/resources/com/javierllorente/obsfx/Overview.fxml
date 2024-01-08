@@ -30,7 +30,7 @@
                <children>
                     <HBox alignment="BASELINE_RIGHT" prefHeight="50.0" prefWidth="200.0" spacing="5.0">
                         <children>
-                            <Button fx:id="viewLogButton" mnemonicParsing="false" onAction="#handleViewLog">
+                            <Button fx:id="viewLogButton" mnemonicParsing="false" onAction="#handleViewLog" text="%overview.view_log" >
                                 <graphic>
                                     <FontIcon iconLiteral="icm-book" iconSize="12" />
                                 </graphic>
@@ -40,7 +40,7 @@
                                     <FontIcon iconLiteral="icm-loop2" iconSize="12" />
                                 </graphic>
                             </Button>
-                            <Button fx:id="downloadButton" mnemonicParsing="false" onAction="#handleDownload" text="%overview.download">
+                            <Button fx:id="downloadButton" mnemonicParsing="false" onAction="#handleDownload">
                                 <graphic>
                                     <FontIcon iconLiteral="icm-download" />
                                 </graphic>
