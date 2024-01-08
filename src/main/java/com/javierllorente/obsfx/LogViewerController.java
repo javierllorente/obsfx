@@ -63,11 +63,9 @@ public class LogViewerController implements Initializable {
     }
     
     public void setText(String text) {
-        Platform.runLater(() -> {
-            textArea.setText(text);
-            textArea.positionCaret(textArea.getLength());
-            searchTextField.requestFocus();
-        });
+        textArea.setText(text);
+        textArea.positionCaret(textArea.getLength());
+        searchTextField.requestFocus();
     }
     
     @FXML    
