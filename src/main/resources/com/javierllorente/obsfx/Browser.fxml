@@ -106,8 +106,9 @@
                         </graphic>
                     </Button>
                     <fx:include fx:id="bookmarks" source="Bookmarks.fxml" />
-                    <TextFields fx:id="locationTextField" fx:factory="createClearableTextField" onKeyPressed="#handleNavigation" prefWidth="350.0" promptText="%bar.location"/>
-                    <Pane HBox.hgrow="ALWAYS" />
+                    <TextFields fx:id="locationTextField" fx:factory="createClearableTextField" onKeyPressed="#handleNavigation" promptText="%bar.location" HBox.hgrow="ALWAYS" />
+                    <TextFields fx:id="searchTextField" fx:factory="createClearableTextField" prefWidth="250.0" onKeyPressed="#handleSearch" promptText="%search.bar" />
+                    <Pane prefWidth="5.0" />
                     <ProgressIndicator fx:id="progressIndicator" prefHeight="15.0" prefWidth="15.0" visible="false" />
                 </items>
             </ToolBar>

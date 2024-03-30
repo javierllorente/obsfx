@@ -36,7 +36,7 @@ public class ShortcutsAlert extends Alert {
     public ShortcutsAlert(Window window) {
         super(AlertType.INFORMATION);
         initOwner(window);
-        getDialogPane().setPrefSize(375, 310);
+        getDialogPane().setPrefSize(375, 325);
         setTitle(App.getBundle().getString("shortcuts"));
         setHeaderText(App.getBundle().getString("keyboard_shortcuts"));
         
@@ -66,6 +66,8 @@ public class ShortcutsAlert extends Alert {
         List<Map.Entry<String, String>> data = Arrays.asList(
                 new AbstractMap.SimpleEntry<>(App.getBundle().getString("shortcuts.location"),
                         "Ctrl + L"),
+                new AbstractMap.SimpleEntry<>(App.getBundle().getString("shortcuts.search"),
+                        "Ctrl + S"),
                 new AbstractMap.SimpleEntry<>(App.getBundle().getString("shortcuts.packages"),
                         "Ctrl + P"),
                 new AbstractMap.SimpleEntry<>(App.getBundle().getString("shortcuts.bookmarks"),

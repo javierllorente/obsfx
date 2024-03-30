@@ -18,6 +18,7 @@ package com.javierllorente.obsfx;
 import com.javierllorente.obsfx.task.BuildResultsTask;
 import com.javierllorente.obsfx.task.RevisionsTask;
 import com.javierllorente.jobs.entity.OBSFile;
+import com.javierllorente.jobs.entity.OBSPackage;
 import com.javierllorente.jobs.entity.OBSPerson;
 import com.javierllorente.jobs.entity.OBSPkgMetaConfig;
 import com.javierllorente.jobs.entity.OBSRequest;
@@ -33,6 +34,7 @@ import com.javierllorente.obsfx.task.PackagesTask;
 import com.javierllorente.obsfx.task.PkgMetaConfigTask;
 import com.javierllorente.obsfx.task.ProjectsTask;
 import com.javierllorente.obsfx.task.RequestsTask;
+import com.javierllorente.obsfx.task.SearchTask;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -46,6 +48,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
@@ -90,6 +93,7 @@ public class BrowserController implements Initializable {
     private FilteredList<String> filteredPackages;
     private ObservableList<String> packagesObservableList;
     private HostServices hostServices;
+    private ObservableList<OBSPackage> searchResults;
 
     @FXML
     private BorderPane borderPane;
@@ -123,6 +127,9 @@ public class BrowserController implements Initializable {
 
     @FXML
     TextField locationTextField;
+    
+    @FXML
+    TextField searchTextField;
 
     /**
      * Initializes the controller class.
@@ -134,6 +141,7 @@ public class BrowserController implements Initializable {
         preferences = Preferences.userNodeForPackage(getClass());
         
         initLocationTextField();
+        initSearchTextField();
         initPackageListView();
         initTabPane();
 
@@ -156,6 +164,28 @@ public class BrowserController implements Initializable {
             if (newValue.isEmpty()) {
                 packagesListView.getSelectionModel().clearSelection();
                 packagesObservableList.clear();
+            }
+        });
+    }
+    
+    private void initSearchTextField() {
+        searchResults = FXCollections.observableArrayList();
+        var autoComplete = TextFields.bindAutoCompletion(searchTextField, input -> {
+            // Do not show results for previous query (results arrive late)
+            return searchResults.stream()
+                    .filter(p -> p.getName().contains(input.getUserText()))
+                    .collect(Collectors.toCollection(FXCollections::observableArrayList));
+        });
+
+        autoComplete.setPrefWidth(searchTextField.getPrefWidth());
+        autoComplete.setVisibleRowCount(7);
+        autoComplete.setHideOnEscape(true);
+        
+        searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.isBlank()) {
+                startSearchTask(newValue);
+            } else {
+                searchResults.clear();
             }
         });
     }
@@ -274,6 +304,8 @@ public class BrowserController implements Initializable {
     public void setAccelerators(ObservableMap<KeyCombination, Runnable> accelerators) {
         KeyCombination projectsShortcut = new KeyCodeCombination(KeyCode.L,
                 KeyCombination.CONTROL_DOWN);
+        KeyCombination searchShortcut = new KeyCodeCombination(KeyCode.S,
+                KeyCombination.CONTROL_DOWN);
         KeyCombination packagesShortcut = new KeyCodeCombination(KeyCode.P,
                 KeyCombination.CONTROL_DOWN);
         KeyCombination bookmarksShortcut = new KeyCodeCombination(KeyCode.B,
@@ -289,6 +321,9 @@ public class BrowserController implements Initializable {
         accelerators.putAll(Map.of(
                 projectsShortcut, () -> {
                     locationTextField.requestFocus();
+                },
+                searchShortcut, () -> {
+                    searchTextField.requestFocus();
                 },
                 packagesShortcut, () -> {
                     packageFilter.requestFocus();
@@ -457,6 +492,25 @@ public class BrowserController implements Initializable {
         projectsTask.setOnFailed((t) -> {
             progressIndicator.setVisible(false);
             showExceptionAlert(projectsTask.getException());
+        });
+    }
+    
+    public void startSearchTask(String pkg) {
+        SearchTask searchTask = new SearchTask(pkg);
+        progressIndicator.setVisible(true);
+        new Thread(searchTask).start();
+        
+        searchTask.setOnSucceeded((t) -> {
+            progressIndicator.setVisible(false);
+            searchResults.clear();
+            if (searchTask.getValue() != null) {
+                searchResults.addAll(searchTask.getValue());
+            }
+        });
+        
+        searchTask.setOnFailed((t) -> {
+            progressIndicator.setVisible(false);
+            showExceptionAlert(searchTask.getException());
         });
     }
 
@@ -643,6 +697,13 @@ public class BrowserController implements Initializable {
     private void handleNavigation(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
             startPackagesTask(locationTextField.getText());
+        }
+    }
+    
+    @FXML
+    private void handleSearch(KeyEvent event) {
+        if (event.getCode() == KeyCode.ENTER && !searchTextField.getText().isBlank()) {
+            goTo(searchTextField.getText());
         }
     }
     
