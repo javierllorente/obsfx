@@ -163,7 +163,7 @@ public class BrowserController implements Initializable {
     private void initLocationTextField() {        
         var autoComplete = TextFields.bindAutoCompletion(locationTextField, input -> {
             return projects.stream()
-                    .filter(p -> p.contains(input.getUserText()))
+                    .filter(p -> p.toLowerCase().contains(input.getUserText().toLowerCase()))
                     .collect(Collectors.toCollection(ArrayList::new));
         });
         autoComplete.prefWidthProperty().bind(locationTextField.widthProperty());
@@ -182,7 +182,8 @@ public class BrowserController implements Initializable {
         var autoComplete = TextFields.bindAutoCompletion(searchTextField, input -> {
             // Do not show results for previous query (results arrive late)
             return searchResults.stream()
-                    .filter(p -> p.getName().contains(input.getUserText()))
+                    .filter(p -> p.getName().toLowerCase()
+                            .contains(input.getUserText().toLowerCase()))
                     .collect(Collectors.toCollection(FXCollections::observableArrayList));
         });
 
@@ -192,7 +193,7 @@ public class BrowserController implements Initializable {
         
         searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.isBlank()) {
-                startSearchTask(newValue);
+                startSearchTask(newValue.toLowerCase());
             } else {
                 searchResults.clear();
             }
