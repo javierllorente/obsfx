@@ -159,7 +159,13 @@ public class BrowserController implements Initializable {
         this.hostServices = hostServices;
     }
 
-    private void initLocationTextField() {
+    private void initLocationTextField() {        
+        var autoComplete = TextFields.bindAutoCompletion(locationTextField, suggestions -> {
+            return projects;
+        });
+        autoComplete.prefWidthProperty().bind(locationTextField.widthProperty());
+        autoComplete.setVisibleRowCount(7);
+        
         locationTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.isEmpty()) {
                 packagesListView.getSelectionModel().clearSelection();
@@ -484,9 +490,6 @@ public class BrowserController implements Initializable {
         new Thread(projectsTask).start();
         projectsTask.setOnSucceeded((t) -> {
             projects = projectsTask.getValue();
-            var autoComplete = TextFields.bindAutoCompletion(locationTextField, projects);
-            autoComplete.setPrefWidth(locationTextField.getPrefWidth());
-            autoComplete.setVisibleRowCount(7);
             progressIndicator.setVisible(false);
         });
         projectsTask.setOnFailed((t) -> {
