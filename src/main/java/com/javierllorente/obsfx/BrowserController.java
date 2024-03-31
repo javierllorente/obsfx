@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -160,8 +161,10 @@ public class BrowserController implements Initializable {
     }
 
     private void initLocationTextField() {        
-        var autoComplete = TextFields.bindAutoCompletion(locationTextField, suggestions -> {
-            return projects;
+        var autoComplete = TextFields.bindAutoCompletion(locationTextField, input -> {
+            return projects.stream()
+                    .filter(p -> p.contains(input.getUserText()))
+                    .collect(Collectors.toCollection(ArrayList::new));
         });
         autoComplete.prefWidthProperty().bind(locationTextField.widthProperty());
         autoComplete.setVisibleRowCount(7);
