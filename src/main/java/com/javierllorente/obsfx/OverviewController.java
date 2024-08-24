@@ -253,15 +253,18 @@ public class OverviewController implements Initializable {
         return packageProperty.get() == null;
     }
     
-    public void clear() {
+    public void clearPkgData() {
         projectProperty.set(null);
         packageProperty.set(null);
-        title.setText(null);
         link.setText(null);
-        description.setText(null);
-        historyIcon.setVisible(false);
-        latestRevision.setText(null);
+        clearLatestRevision();
         buildResultsTable.getItems().clear();
+    }
+    
+    public void clear() {
+        title.setText(null);
+        description.setText(null);
+        clearPkgData();
     }
     
     public void toggleButtons(boolean visible) {

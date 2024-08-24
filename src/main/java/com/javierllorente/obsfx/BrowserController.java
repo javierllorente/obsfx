@@ -236,7 +236,7 @@ public class BrowserController implements Initializable {
                         tabPane.getTabs().remove(filesTab);
                         tabPane.getTabs().remove(revisionsTab);                        
                         
-                        overviewController.clear();
+                        overviewController.clearPkgData();
                         filesController.clear();
                         revisionsController.clear();
                         requestsController.clear();
