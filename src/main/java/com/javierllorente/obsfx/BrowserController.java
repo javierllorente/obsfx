@@ -773,7 +773,7 @@ public class BrowserController implements Initializable {
                 ? location.split("/", 2)[1].replace("/", "") : "";
         PackagesTask packagesTask = new PackagesTask(prj);
         
-        if (!prj.isBlank()) {
+        if (!prj.isBlank() && pkg.isBlank()) {
             startPrjMetaConfigTask(prj);
         }
         
