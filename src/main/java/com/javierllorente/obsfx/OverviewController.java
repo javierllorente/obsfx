@@ -263,5 +263,11 @@ public class OverviewController implements Initializable {
         latestRevision.setText(null);
         buildResultsTable.getItems().clear();
     }
+    
+    public void toggleButtons(boolean visible) {
+        viewLogButton.setVisible(visible);
+        refreshButton.setVisible(visible);
+        downloadButton.setVisible(visible);
+    }
 
 }

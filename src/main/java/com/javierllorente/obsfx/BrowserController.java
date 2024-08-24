@@ -230,6 +230,7 @@ public class BrowserController implements Initializable {
                     String pkg = newValue;
                     logger.log(Level.INFO, "Selected package: {0}", pkg);
                     bookmarksController.setPkg(pkg);
+                    overviewController.toggleButtons(pkg != null);
 
                     if (pkg == null) {
                         tabPane.getTabs().remove(filesTab);
@@ -393,7 +394,7 @@ public class BrowserController implements Initializable {
         ));
     }
 
-    private void startPrjMetaConfigTask(String prj) {
+    private void startPrjMetaConfigTask(String prj) {       
         PrjMetaConfigTask prjMetaConfigTask = new PrjMetaConfigTask(prj);
         progressIndicator.setVisible(true);
         new Thread(prjMetaConfigTask).start();
@@ -776,6 +777,7 @@ public class BrowserController implements Initializable {
             startPrjMetaConfigTask(prj);
         }
         
+        overviewController.toggleButtons(!pkg.isBlank());
         progressIndicator.setVisible(true);
         new Thread(packagesTask).start();
 

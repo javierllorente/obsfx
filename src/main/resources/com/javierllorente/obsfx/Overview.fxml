@@ -30,24 +30,24 @@
                <children>
                     <HBox alignment="BASELINE_RIGHT" prefHeight="50.0" prefWidth="200.0" spacing="5.0">
                         <children>
-                            <Button fx:id="viewLogButton" mnemonicParsing="false" onAction="#handleViewLog" text="%overview.view_log" >
+                            <Button fx:id="viewLogButton" mnemonicParsing="false" onAction="#handleViewLog" text="%overview.view_log" visible="false">
                                 <graphic>
                                     <FontIcon iconLiteral="icm-book" iconSize="12" />
                                 </graphic>
                             </Button>
-                            <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#handleRefresh">
+                            <Button fx:id="refreshButton" mnemonicParsing="false" onAction="#handleRefresh" visible="false">
                                 <graphic>
                                     <FontIcon iconLiteral="icm-loop2" iconSize="12" />
                                 </graphic>
                             </Button>
-                            <Button fx:id="downloadButton" mnemonicParsing="false" onAction="#handleDownload">
+                            <Button fx:id="downloadButton" mnemonicParsing="false" onAction="#handleDownload" visible="false">
                                 <graphic>
                                     <FontIcon iconLiteral="icm-download" />
                                 </graphic>
                             </Button>
                         </children>
                     </HBox>
-                  <HBox alignment="BOTTOM_RIGHT" VBox.vgrow="ALWAYS" spacing="5">
+                  <HBox alignment="BOTTOM_RIGHT" spacing="5" VBox.vgrow="ALWAYS">
                      <children>
                          <FontIcon fx:id="historyIcon" iconLiteral="icm-history" visible="false" /><Label fx:id="latestRevision" />
                      </children>
