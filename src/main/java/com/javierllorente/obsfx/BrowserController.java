@@ -65,6 +65,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -113,6 +114,12 @@ public class BrowserController implements Initializable {
 
     @FXML
     private TabPane tabPane;
+    
+    @FXML
+    private Tab filesTab;
+    
+    @FXML
+    private Tab revisionsTab;
 
     @FXML
     private OverviewController overviewController;
@@ -223,13 +230,17 @@ public class BrowserController implements Initializable {
                     bookmarksController.setPkg(pkg);
 
                     if (pkg == null) {
+                        tabPane.getTabs().remove(filesTab);
+                        tabPane.getTabs().remove(revisionsTab);                        
                         overviewController.clear();
                         filesController.clear();
                         revisionsController.clear();
                         requestsController.clear();
                         return;
                     }
-
+                    
+                    tabPane.getTabs().add(1, filesTab);
+                    tabPane.getTabs().add(2, revisionsTab);
                     locationTextField.setText(prj + "/" + pkg);
 
                     switch (tabPane.getSelectionModel().getSelectedIndex()) {
@@ -273,6 +284,9 @@ public class BrowserController implements Initializable {
     }
 
     private void initTabPane() {
+        tabPane.getTabs().remove(filesTab);
+        tabPane.getTabs().remove(revisionsTab);
+        
         tabPane.getSelectionModel().selectedIndexProperty().addListener((var ov, var t, var t1) -> {
             String prj = getLocationProject();
             String pkg = packagesListView.getSelectionModel().getSelectedItem();
@@ -490,7 +504,7 @@ public class BrowserController implements Initializable {
 
     public void startProjectsTask() {
         ProjectsTask projectsTask = new ProjectsTask();
-        progressIndicator.setVisible(true);
+        progressIndicator.setVisible(true);        
         new Thread(projectsTask).start();
         projectsTask.setOnSucceeded((t) -> {
             projects = projectsTask.getValue();
