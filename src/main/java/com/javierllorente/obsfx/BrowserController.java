@@ -21,6 +21,7 @@ import com.javierllorente.jobs.entity.OBSFile;
 import com.javierllorente.jobs.entity.OBSPackage;
 import com.javierllorente.jobs.entity.OBSPerson;
 import com.javierllorente.jobs.entity.OBSPkgMetaConfig;
+import com.javierllorente.jobs.entity.OBSPrjMetaConfig;
 import com.javierllorente.jobs.entity.OBSRequest;
 import com.javierllorente.jobs.entity.OBSResult;
 import com.javierllorente.jobs.entity.OBSRevision;
@@ -32,6 +33,7 @@ import com.javierllorente.obsfx.task.BuildLogTask;
 import com.javierllorente.obsfx.task.FilesTask;
 import com.javierllorente.obsfx.task.PackagesTask;
 import com.javierllorente.obsfx.task.PkgMetaConfigTask;
+import com.javierllorente.obsfx.task.PrjMetaConfigTask;
 import com.javierllorente.obsfx.task.ProjectsTask;
 import com.javierllorente.obsfx.task.RequestsTask;
 import com.javierllorente.obsfx.task.SearchTask;
@@ -232,10 +234,13 @@ public class BrowserController implements Initializable {
                     if (pkg == null) {
                         tabPane.getTabs().remove(filesTab);
                         tabPane.getTabs().remove(revisionsTab);                        
+                        
                         overviewController.clear();
                         filesController.clear();
                         revisionsController.clear();
                         requestsController.clear();
+                        
+                        startPrjMetaConfigTask(prj);
                         return;
                     }
                     
@@ -388,6 +393,22 @@ public class BrowserController implements Initializable {
         ));
     }
 
+    private void startPrjMetaConfigTask(String prj) {
+        PrjMetaConfigTask prjMetaConfigTask = new PrjMetaConfigTask(prj);
+        progressIndicator.setVisible(true);
+        new Thread(prjMetaConfigTask).start();
+
+        prjMetaConfigTask.setOnSucceeded((e) -> {
+            OBSPrjMetaConfig prjMetaConfig = prjMetaConfigTask.getValue();
+            overviewController.setMetaConfig(prjMetaConfig);
+            progressIndicator.setVisible(false);
+        });
+        prjMetaConfigTask.setOnFailed((t) -> {
+            progressIndicator.setVisible(false);
+            showExceptionAlert(prjMetaConfigTask.getException());
+        });
+    }
+    
     private void startPkgMetaConfigTask(String prj, String pkg) {
         PkgMetaConfigTask pkgMetaConfigTask = new PkgMetaConfigTask(prj, pkg);
         progressIndicator.setVisible(true);
@@ -395,7 +416,7 @@ public class BrowserController implements Initializable {
 
         pkgMetaConfigTask.setOnSucceeded((e) -> {
             OBSPkgMetaConfig pkgMetaConfig = pkgMetaConfigTask.getValue();
-            overviewController.setPkgMetaConfig(pkgMetaConfig);
+            overviewController.setMetaConfig(pkgMetaConfig);
             progressIndicator.setVisible(false);
         });
         pkgMetaConfigTask.setOnFailed((t) -> {
@@ -750,6 +771,11 @@ public class BrowserController implements Initializable {
         final String pkg = location.contains("/") 
                 ? location.split("/", 2)[1].replace("/", "") : "";
         PackagesTask packagesTask = new PackagesTask(prj);
+        
+        if (!prj.isBlank()) {
+            startPrjMetaConfigTask(prj);
+        }
+        
         progressIndicator.setVisible(true);
         new Thread(packagesTask).start();
 

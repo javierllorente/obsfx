@@ -15,6 +15,7 @@
  */
 package com.javierllorente.obsfx;
 
+import com.javierllorente.jobs.entity.OBSMetaConfig;
 import com.javierllorente.jobs.entity.OBSPkgMetaConfig;
 import com.javierllorente.jobs.entity.OBSResult;
 import com.javierllorente.jobs.entity.OBSRevision;
@@ -111,30 +112,32 @@ public class OverviewController implements Initializable {
         this.browserController = browserController;
     }
     
-    public void setPkgMetaConfig(OBSPkgMetaConfig pkgMetaConfig) {        
-        String configTitle = pkgMetaConfig.getTitle();
+    public void setMetaConfig(OBSMetaConfig metaConfig) {        
+        String configTitle = metaConfig.getTitle();
         if (configTitle.isBlank()) {
-            configTitle = pkgMetaConfig.getName();
+            configTitle = metaConfig.getName();
         }
         title.setText(configTitle);
         
-        if (pkgMetaConfig.getUrl() != null) {
-            link.setText(pkgMetaConfig.getUrl().toString());
-            link.setOnAction((t) -> {
-                browserController.getHostServices().showDocument(link.getText());
-            });
-        } else {
-            link.setText("");
-        }
+        if (metaConfig instanceof OBSPkgMetaConfig pkgMetaConfig) {            
+            if (pkgMetaConfig.getUrl() != null) {
+                link.setText(pkgMetaConfig.getUrl().toString());
+                link.setOnAction((t) -> {
+                    browserController.getHostServices().showDocument(link.getText());
+                });
+            } else {
+                link.setText("");
+            }
+            projectProperty.set(pkgMetaConfig.getProject());
+        }        
         
-        String configDescription = pkgMetaConfig.getDescription();
+        String configDescription = metaConfig.getDescription();
         if (configDescription.isBlank()) {
             configDescription = App.getBundle().getString("overview.nodescription");
         }        
         description.setText(configDescription);
         
-        packageProperty.set(pkgMetaConfig.getName());
-        projectProperty.set(pkgMetaConfig.getProject());        
+        packageProperty.set(metaConfig.getName());
     }
     
     public void setBuildLog(String buildLog) {
