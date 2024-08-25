@@ -225,7 +225,7 @@ public class BrowserController implements Initializable {
             pkg = location.split("/", 2)[1].replace("/", "");
         }
         return pkg;
-    }
+}
     
     public void goTo(String location) {
         locationTextField.setText(location);
@@ -820,9 +820,11 @@ public class BrowserController implements Initializable {
         logger.log(Level.INFO, "package = {0}", location.contains("/") 
                 ? location.split("/", 2)[1] : "");
 
-        final String prj = location.contains("/") ? location.split("/", 2)[0] : location;
+        final String prj = getLocationProject();
         final String pkg = location.contains("/") 
                 ? location.split("/", 2)[1].replace("/", "") : "";
+        logger.log(Level.INFO, "package = {0}", pkg);
+        
         PackagesTask packagesTask = new PackagesTask(prj);
         overviewController.toggleButtons(!pkg.isBlank());
         progressIndicator.setVisible(true);
