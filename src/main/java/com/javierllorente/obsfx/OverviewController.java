@@ -247,6 +247,10 @@ public class OverviewController implements Initializable {
         buildResultsTable.sort();
     }
     
+    public String getPrj() {
+        return projectProperty.get();
+    }
+    
     public String getPkg() {
         return packageProperty.get();
     }
