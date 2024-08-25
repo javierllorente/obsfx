@@ -129,7 +129,9 @@ public class OverviewController implements Initializable {
                 link.setText("");
             }
             projectProperty.set(pkgMetaConfig.getProject());
-        }        
+        } else {
+            projectProperty.set(metaConfig.getName());
+        }
         
         String configDescription = metaConfig.getDescription();
         if (configDescription.isBlank()) {
@@ -244,7 +246,7 @@ public class OverviewController implements Initializable {
         buildResultsTable.getItems().setAll(results);
         buildResultsTable.sort();
     }
-
+    
     public String getPkg() {
         return packageProperty.get();
     }
@@ -254,7 +256,6 @@ public class OverviewController implements Initializable {
     }
     
     public void clearPkgData() {
-        projectProperty.set(null);
         packageProperty.set(null);
         link.setText(null);
         clearLatestRevision();
@@ -264,6 +265,7 @@ public class OverviewController implements Initializable {
     public void clear() {
         title.setText(null);
         description.setText(null);
+        projectProperty.set(null);
         clearPkgData();
     }
     
