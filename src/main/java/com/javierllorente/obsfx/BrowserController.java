@@ -217,6 +217,15 @@ public class BrowserController implements Initializable {
         return location;
     }
     
+    private String getLocationPackage() {
+        String location = locationTextField.getText();
+        String pkg = null;
+        if (location.contains("/")) {
+            pkg = location.split("/", 2)[1].replace("/", "");
+        }
+        return pkg;
+    }
+    
     public void goTo(String location) {
         locationTextField.setText(location);
         startPackagesTask(location);        
@@ -240,8 +249,9 @@ public class BrowserController implements Initializable {
                         filesController.clear();
                         revisionsController.clear();
                         requestsController.clear();
-                        
-                        startPrjMetaConfigTask(prj);
+                        if (getLocationPackage() == null) {
+                            startPrjMetaConfigTask(prj);
+                        }
                         return;
                     }
                     
