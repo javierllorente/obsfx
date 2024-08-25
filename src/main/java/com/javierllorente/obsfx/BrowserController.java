@@ -291,6 +291,9 @@ public class BrowserController implements Initializable {
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
+                if (getLocationPackage() != null) {
+                    locationTextField.setText(getLocationProject());
+                }
                 String lowerCaseFilter = newValue.toLowerCase();
                 return s.contains(lowerCaseFilter);
             });
