@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import javafx.scene.text.Text;
  */
 public class RequestsController implements Initializable {
 
+    private String prj;
     private String pkg;
     
     @FXML
@@ -105,6 +106,14 @@ public class RequestsController implements Initializable {
     public void set(List<OBSRequest> requests) {
         requestsTable.getItems().setAll(requests);
         requestsTable.sort();
+    }
+
+    public String getPrj() {
+        return prj;
+    }
+
+    public void setPrj(String prj) {
+        this.prj = prj;
     }
 
     public String getPkg() {
