@@ -269,8 +269,12 @@ public class BrowserController implements Initializable {
                         return;
                     }
                     
-                    tabPane.getTabs().add(1, filesTab);
-                    tabPane.getTabs().add(2, revisionsTab);
+                    if (tabPane.getTabs().indexOf(filesTab) == -1
+                            && tabPane.getTabs().indexOf(revisionsTab) == -1) {
+                        tabPane.getTabs().add(1, filesTab);
+                        tabPane.getTabs().add(2, revisionsTab);
+                    }
+                    
                     locationTextField.setText(prj + "/" + pkg);
 
                     switch (tabPane.getSelectionModel().getSelectedIndex()) {
