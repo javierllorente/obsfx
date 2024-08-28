@@ -90,7 +90,7 @@ public class RequestsController implements Initializable {
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
                     if (empty) {
-                        setText(null);
+                        setGraphic(null);
                     } else {
                         Text text = new Text(item);
                         setGraphic(text);
