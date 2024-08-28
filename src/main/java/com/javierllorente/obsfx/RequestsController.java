@@ -125,6 +125,7 @@ public class RequestsController implements Initializable {
     }
     
     public void clear() {
+        prj = null;
         requestsTable.getItems().clear();
     }
     
