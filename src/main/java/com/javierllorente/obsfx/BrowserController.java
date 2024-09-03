@@ -15,8 +15,6 @@
  */
 package com.javierllorente.obsfx;
 
-import com.javierllorente.obsfx.task.BuildResultsTask;
-import com.javierllorente.obsfx.task.RevisionsTask;
 import com.javierllorente.jobs.entity.OBSFile;
 import com.javierllorente.jobs.entity.OBSPackage;
 import com.javierllorente.jobs.entity.OBSPerson;
@@ -30,6 +28,7 @@ import com.javierllorente.obsfx.alert.ShortcutsAlert;
 import com.javierllorente.obsfx.dialog.LoginDialog;
 import com.javierllorente.obsfx.dialog.SettingsDialog;
 import com.javierllorente.obsfx.task.BuildLogTask;
+import com.javierllorente.obsfx.task.BuildResultsTask;
 import com.javierllorente.obsfx.task.FilesTask;
 import com.javierllorente.obsfx.task.PackagesTask;
 import com.javierllorente.obsfx.task.PkgMetaConfigTask;
@@ -37,6 +36,7 @@ import com.javierllorente.obsfx.task.PrjMetaConfigTask;
 import com.javierllorente.obsfx.task.ProjectRequestsTask;
 import com.javierllorente.obsfx.task.ProjectsTask;
 import com.javierllorente.obsfx.task.RequestsTask;
+import com.javierllorente.obsfx.task.RevisionsTask;
 import com.javierllorente.obsfx.task.SearchTask;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -99,6 +99,11 @@ public class BrowserController implements Initializable {
     private ObservableList<String> packagesObservableList;
     private HostServices hostServices;
     private ObservableList<OBSPackage> searchResults;
+    private boolean changedMode;
+    private String currentProject;
+    private String currentPackage;
+    private String lastProject;
+    private String lastPackage;
 
     @FXML
     private BorderPane borderPane;
@@ -150,6 +155,10 @@ public class BrowserController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         preferences = Preferences.userNodeForPackage(getClass());
+        currentProject = "";
+        currentPackage = "";
+        lastProject = "";
+        lastPackage = "";
         
         initLocationTextField();
         initSearchTextField();
@@ -178,13 +187,6 @@ public class BrowserController implements Initializable {
         });
         autoComplete.prefWidthProperty().bind(locationTextField.widthProperty());
         autoComplete.setVisibleRowCount(7);
-        
-        locationTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.isEmpty()) {
-                packagesListView.getSelectionModel().clearSelection();
-                packagesObservableList.clear();
-            }
-        });
     }
     
     private void initSearchTextField() {
@@ -220,30 +222,78 @@ public class BrowserController implements Initializable {
     
     private String getLocationPackage() {
         String location = locationTextField.getText();
-        String pkg = null;
+        String pkg = "";
         if (location.contains("/")) {
             pkg = location.split("/", 2)[1].replace("/", "");
         }
         return pkg;
-}
+    }
+    
+    private void load(String location) {
+        logger.log(Level.INFO, "location = {0}", location);
+        currentProject = getLocationProject();
+        currentPackage = getLocationPackage();        
+        startPackagesTask();
+        
+        if (getLocationPackage().isBlank()) {
+            handleProjectTasks(); 
+        } else {
+            handlePackageTasks();
+        }
+        
+        changedMode = (!lastPackage.isBlank() && getLocationPackage().isBlank())
+                || (lastPackage.isBlank() && !getLocationPackage().isBlank());
+        logger.log(Level.INFO, "changedMode = {0}", changedMode);
+        
+        lastProject = getLocationProject();
+        lastPackage = getLocationPackage();        
+    }
     
     public void goTo(String location) {
         locationTextField.setText(location);
-        startPackagesTask(location);
-        if (getLocationPackage() == null) {
-            handleProjectTasks(); 
+        load(location);
+    }
+    
+    private void handleProjectTasks() {
+        int tabIndex = tabPane.getSelectionModel().getSelectedIndex();
+        logger.log(Level.INFO, "tabIndex = {0}", tabIndex);
+        switch (tabIndex) {
+            case 0 -> {
+                overviewController.clear();
+                startPrjMetaConfigTask(getLocationProject());
+            }
+            case 1 -> {
+                requestsController.clear();
+                startProjectRequestsTask(getLocationProject());
+            }
         }
     }
-
-    private void handleProjectTasks() {
-        switch (tabPane.getSelectionModel().getSelectedIndex()) {
+    
+    private void handlePackageTasks() {
+        int tabIndex = tabPane.getSelectionModel().getSelectedIndex();
+        logger.log(Level.INFO, "tabIndex = {0}", tabIndex);
+        String prj = getLocationProject();
+        String pkg = getLocationPackage();
+        
+        switch (tabIndex) {
             case 0 -> {
-                if (getLocationPackage() == null) {
-                    startPrjMetaConfigTask(getLocationProject());
-                }
+                overviewController.clear();
+                startPkgMetaConfigTask(prj, pkg);
+                startLatestRevisionTask(prj, pkg);
+                startBuildResultsTask(prj, pkg);
             }
-            case 1 ->
-                startProjectRequestsTask(getLocationProject());
+            case 1 -> {
+                filesController.clear();
+                startFilesTask(prj, pkg);
+            }
+            case 2 -> {
+                revisionsController.clear();
+                startRevisionsTask(prj, pkg);
+            }
+            case 3 -> {
+                requestsController.clear();
+                startRequestsTask(prj, pkg);
+            }
         }
     }
 
@@ -251,48 +301,79 @@ public class BrowserController implements Initializable {
         packagesListView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends String> ov,
                         String oldValue, String newValue) -> {
-                    String prj = getLocationProject();
-                    String pkg = newValue;
-                    logger.log(Level.INFO, "Selected package: {0}", pkg);
-                    bookmarksController.setPkg(pkg);
-                    overviewController.toggleButtons(pkg != null);
+                    logger.log(Level.INFO, "1. locationPackage = {0}", getLocationPackage());
+                    String prj = currentProject;
+                    
+                    String selectedPackage = (newValue == null) ? "" : newValue;
+                    
+                    currentPackage = selectedPackage;
+                    
+                    logger.log(Level.INFO, "selectedPackage = {0}", selectedPackage);
+                    logger.log(Level.INFO, "currentPackage = {0}", currentPackage);
+                    bookmarksController.setPkg(selectedPackage);
+                    overviewController.toggleButtons(!selectedPackage.isEmpty());
 
-                    if (pkg == null) {
+                    if (selectedPackage.isEmpty() && getLocationPackage().isBlank()) {
                         tabPane.getTabs().remove(filesTab);
-                        tabPane.getTabs().remove(revisionsTab);                        
+                        tabPane.getTabs().remove(revisionsTab);
                         
                         overviewController.clearPkgData();
                         filesController.clear();
                         revisionsController.clear();
                         requestsController.clear();
-                        handleProjectTasks();
+
                         return;
                     }
                     
-                    if (tabPane.getTabs().indexOf(filesTab) == -1
-                            && tabPane.getTabs().indexOf(revisionsTab) == -1) {
+                    if (tabPane.getTabs().indexOf(filesTab) == -1 && 
+                            tabPane.getTabs().indexOf(revisionsTab) == -1) {
                         tabPane.getTabs().add(1, filesTab);
                         tabPane.getTabs().add(2, revisionsTab);
+                        changedMode = true;
                     }
                     
-                    locationTextField.setText(prj + "/" + pkg);
+                    // Achtung! selectedPackage is empty when projectA/package -> projectB/package
+                    if (selectedPackage.isEmpty() && !getLocationPackage().isBlank()) {
+                        return;
+                    }
+                    
+                    locationTextField.setText(prj + "/" + selectedPackage);
+                    int tabIndex = tabPane.getSelectionModel().getSelectedIndex();
 
-                    switch (tabPane.getSelectionModel().getSelectedIndex()) {
+                    logger.log(Level.INFO, "Tab index = {0}", tabIndex);
+                    switch (tabIndex) {
                         case 0:
-                            startPkgMetaConfigTask(prj, pkg);
-                            startLatestRevisionTask(prj, pkg);
-                            startBuildResultsTask(prj, pkg);
+                            startPkgMetaConfigTask(prj, selectedPackage);
+                            startLatestRevisionTask(prj, selectedPackage);
+                            startBuildResultsTask(prj, selectedPackage);
                             break;
                         case 1:
-                            startFilesTask(prj, pkg);
+                            startFilesTask(prj, selectedPackage);
                             break;
                         case 2:
-                            startRevisionsTask(prj, pkg);
+                            startRevisionsTask(prj, selectedPackage);
                             break;
                         case 3:
-                            startRequestsTask(prj, pkg);
+                            if (changedMode) {
+                                changedMode = false;
+                                return;
+                            }
+                            
+                            if ((!prj.equals(requestsController.getPrj())
+                                    && !selectedPackage.equals(requestsController.getPkg())
+                                    || prj.equals(requestsController.getPrj())
+                                    && !selectedPackage.equals(requestsController.getPkg()))
+                                    || !prj.equals(requestsController.getPrj()) 
+                                    && selectedPackage.equals(requestsController.getPkg())) {
+                                requestsController.clear();
+                                startRequestsTask(prj, selectedPackage);
+                            }
                             break;
                     }
+                    
+                    lastProject = currentProject;
+                    lastPackage = currentPackage;
+                    changedMode = false;
                 });
 
         packagesObservableList = FXCollections.observableArrayList();
@@ -309,7 +390,7 @@ public class BrowserController implements Initializable {
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
                 }
-                if (getLocationPackage() != null) {
+                if (!getLocationPackage().isBlank()) {
                     locationTextField.setText(getLocationProject());
                 }
                 String lowerCaseFilter = newValue.toLowerCase();
@@ -323,18 +404,30 @@ public class BrowserController implements Initializable {
     private void initTabPane() {
         tabPane.getTabs().remove(filesTab);
         tabPane.getTabs().remove(revisionsTab);
-        
-        tabPane.getSelectionModel().selectedIndexProperty().addListener((var ov, var t, var t1) -> {
-            String prj = getLocationProject();
-            String pkg = packagesListView.getSelectionModel().getSelectedItem();
+        changedMode = false;
+
+        tabPane.getSelectionModel().selectedIndexProperty().addListener((var ov, var t, var t1) -> {            
+            logger.log(Level.INFO, "old tab {0}, new tab {1}", 
+                    new Object[]{t.intValue(), t1.intValue()});
+            
+            // Avoid fetching requests twice when going from project to project/package (and viceversa);
+            // tabs are added/removed, so tab index changes which triggers this listener
+            logger.log(Level.INFO, "changedMode is {0}", changedMode);
+            if (changedMode) {
+                changedMode = false;
+                return;
+            }
+            
+            String prj = currentProject;
+            String pkg = currentPackage;
 
             switch (t1.intValue()) {
                 case 0:
-                    logger.info("Overview tab visible");
-                    if (!prj.isBlank() && !prj.equals(overviewController.getPrj()) && pkg == null) {
+                    logger.info("Overview tab visible");;
+                    if (!prj.isBlank() && !prj.equals(overviewController.getPrj()) && pkg.isBlank()) {
                         overviewController.clearPkgData();
                         startPrjMetaConfigTask(prj);
-                    } else if (!prj.isBlank() && pkg != null && !pkg.equals(overviewController.getPkg())) {
+                    } else if (!prj.isBlank() && !pkg.isBlank() && !pkg.equals(overviewController.getPkg())) {
                         overviewController.clear();
                         startPkgMetaConfigTask(prj, pkg);
                         startLatestRevisionTask(prj, pkg);
@@ -342,11 +435,12 @@ public class BrowserController implements Initializable {
                     }
                     break;
                 case 1:
-                    if (!prj.isBlank() && !prj.equals(requestsController.getPrj()) && pkg == null) {
+                    if (!prj.isBlank() && !prj.equals(requestsController.getPrj()) && pkg.isBlank() 
+                            && getLocationPackage().isBlank()) {
                         logger.info("Requests tab visible");
                         requestsController.clear();
                         startProjectRequestsTask(prj);
-                    } else if (!prj.isBlank() && pkg != null && !pkg.equals(filesController.getPkg())) {
+                    } else if (!prj.isBlank() && !pkg.isBlank() && !pkg.equals(filesController.getPkg())) {
                         logger.info("Files tab visible");
                         filesController.clear();
                         startFilesTask(prj, pkg);
@@ -354,19 +448,24 @@ public class BrowserController implements Initializable {
                     break;
                 case 2:
                     logger.info("Revision tab visible");
-                    if (!prj.isBlank() && pkg != null && !pkg.equals(revisionsController.getPkg())) {
+                    if (!prj.isBlank() && !pkg.isBlank() && !pkg.equals(revisionsController.getPkg())) {
                         revisionsController.clear();
                         startRevisionsTask(prj, pkg);
                     }
                     break;
                 case 3:
                     logger.info("Requests tab visible");
-                    if (!prj.isBlank() && pkg != null && !pkg.equals(requestsController.getPkg())) {
+                    if (!prj.equals(requestsController.getPrj()) 
+                            && pkg.equals(requestsController.getPkg())
+                            || !prj.isBlank() && !pkg.isBlank() 
+                            && !pkg.equals(requestsController.getPkg())) {
                         requestsController.clear();
                         startRequestsTask(prj, pkg);
                     }
                     break;
             }
+            lastProject = currentProject;
+            lastPackage = currentPackage;
         });
     }
 
@@ -571,6 +670,7 @@ public class BrowserController implements Initializable {
         requestsTask.setOnSucceeded((e) -> {
             List<OBSRequest> requests = requestsTask.getValue();
             requestsController.set(requests);
+            requestsController.setPrj(prj);            
             requestsController.setPkg(pkg);
             progressIndicator.setVisible(false);
         });
@@ -794,8 +894,7 @@ public class BrowserController implements Initializable {
     @FXML
     private void handleNavigation(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER) {
-            startPackagesTask(locationTextField.getText());
-            handleProjectTasks();
+            load(locationTextField.getText());
         }
     }
     
@@ -815,19 +914,15 @@ public class BrowserController implements Initializable {
         alert.show();
     }
 
-    private void startPackagesTask(String location) {        
+    private void startPackagesTask() {        
         if (!App.getOBS().isAuthenticated()) {
             showNotAuthenticatedAlert();
             return;
         }
 
-        logger.log(Level.INFO, "package = {0}", location.contains("/") 
-                ? location.split("/", 2)[1] : "");
-
         final String prj = getLocationProject();
-        final String pkg = location.contains("/") 
-                ? location.split("/", 2)[1].replace("/", "") : "";
-        logger.log(Level.INFO, "package = {0}", pkg);
+        final String pkg = getLocationPackage();
+        logger.log(Level.INFO, "project = {0}", prj);
         
         PackagesTask packagesTask = new PackagesTask(prj);
         overviewController.toggleButtons(!pkg.isBlank());
@@ -844,7 +939,9 @@ public class BrowserController implements Initializable {
 
             logger.log(Level.INFO, "package = {0}", pkg);
             if (!pkg.isEmpty()) {
+                logger.log(Level.INFO, "Selecting package = {0}", pkg);
                 packagesListView.getSelectionModel().select(pkg);
+                packagesListView.scrollTo(pkg);
             }
         });
         
