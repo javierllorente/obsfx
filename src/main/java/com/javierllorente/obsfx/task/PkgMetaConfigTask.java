@@ -40,7 +40,7 @@ public class PkgMetaConfigTask extends Task<OBSPkgMetaConfig> {
     @Override
     protected OBSPkgMetaConfig call() throws Exception {
         if (prj != null && pkg != null) {
-            logger.log(Level.INFO, "Fetching pkg meta config of {0}:{1}", new Object[]{prj, pkg});
+            logger.log(Level.INFO, "Fetching pkg meta config of {0}/{1}", new Object[]{prj, pkg});
             return App.getOBS().getPackageMetaConfig(prj, pkg);
         }
         return null;
