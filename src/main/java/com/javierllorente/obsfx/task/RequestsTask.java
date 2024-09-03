@@ -41,7 +41,7 @@ public class RequestsTask extends Task<List<OBSRequest>> {
     @Override
     protected List<OBSRequest> call() throws Exception {
         if (prj != null && pkg != null) {
-            logger.log(Level.INFO, "Fetching requests of {0}:{1}", new Object[]{prj, pkg});
+            logger.log(Level.INFO, "Fetching requests of {0}/{1}", new Object[]{prj, pkg});
             return App.getOBS().getPackageRequests(prj, pkg);
         }
         return null;
