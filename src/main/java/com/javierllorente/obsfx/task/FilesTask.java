@@ -41,7 +41,7 @@ public class FilesTask extends Task<List<OBSFile>> {
     @Override
     protected List<OBSFile> call() throws Exception {
         if (prj != null && pkg != null) {
-            logger.log(Level.INFO, "Fetching files of {0}:{1}", new Object[]{prj, pkg});
+            logger.log(Level.INFO, "Fetching files of {0}/{1}", new Object[]{prj, pkg});
             return App.getOBS().getFileList(prj, pkg);
         }
         return null;
