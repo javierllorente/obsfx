@@ -43,7 +43,7 @@ public class RevisionsTask extends Task<List<OBSRevision>> {
     @Override
     protected List<OBSRevision> call() throws Exception {
         if (prj != null && pkg != null) {
-            logger.log(Level.INFO, "Fetching revisions of {0}:{1}", new Object[]{prj, pkg});
+            logger.log(Level.INFO, "Fetching revisions of {0}/{1}", new Object[]{prj, pkg});
             return latest ? App.getOBS().getLatestRevision(prj, pkg) : App.getOBS().getRevisions(prj, pkg);
         }
         return null;
