@@ -236,6 +236,8 @@ public class BrowserController implements Initializable {
         startPackagesTask();
         
         if (getLocationPackage().isBlank()) {
+            tabPane.getTabs().remove(filesTab);
+            tabPane.getTabs().remove(revisionsTab);
             handleProjectTasks(); 
         } else {
             handlePackageTasks();
@@ -313,10 +315,7 @@ public class BrowserController implements Initializable {
                     bookmarksController.setPkg(selectedPackage);
                     overviewController.toggleButtons(!selectedPackage.isEmpty());
 
-                    if (selectedPackage.isEmpty() && getLocationPackage().isBlank()) {
-                        tabPane.getTabs().remove(filesTab);
-                        tabPane.getTabs().remove(revisionsTab);
-                        
+                    if (selectedPackage.isEmpty() && getLocationPackage().isBlank()) {                        
                         overviewController.clearPkgData();
                         filesController.clear();
                         revisionsController.clear();
