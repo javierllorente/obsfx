@@ -100,6 +100,7 @@ public class BrowserController implements Initializable {
     private HostServices hostServices;
     private ObservableList<OBSPackage> searchResults;
     private boolean changedMode;
+    private boolean loaded;
     private String currentProject;
     private String currentPackage;
     private String lastProject;
@@ -155,6 +156,7 @@ public class BrowserController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         preferences = Preferences.userNodeForPackage(getClass());
+        loaded = false;
         currentProject = "";
         currentPackage = "";
         lastProject = "";
@@ -232,7 +234,7 @@ public class BrowserController implements Initializable {
     private void load(String location) {
         logger.log(Level.INFO, "location = {0}", location);
         currentProject = getLocationProject();
-        currentPackage = getLocationPackage();        
+        currentPackage = getLocationPackage();
         startPackagesTask();
         
         if (getLocationPackage().isBlank()) {
@@ -243,8 +245,9 @@ public class BrowserController implements Initializable {
             handlePackageTasks();
         }
         
-        changedMode = (!lastPackage.isBlank() && getLocationPackage().isBlank())
-                || (lastPackage.isBlank() && !getLocationPackage().isBlank());
+        loaded = true;
+        changedMode = (!lastPackage.isBlank() && currentPackage.isBlank())
+                || (lastPackage.isBlank() && !currentPackage.isBlank());
         logger.log(Level.INFO, "changedMode = {0}", changedMode);
         
         lastProject = getLocationProject();
@@ -303,7 +306,7 @@ public class BrowserController implements Initializable {
         packagesListView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends String> ov,
                         String oldValue, String newValue) -> {
-                    logger.log(Level.INFO, "1. locationPackage = {0}", getLocationPackage());
+                    logger.log(Level.INFO, "1. locationPackage = {0}", getLocationPackage());                    
                     String prj = currentProject;
                     
                     String selectedPackage = (newValue == null) ? "" : newValue;
@@ -315,11 +318,21 @@ public class BrowserController implements Initializable {
                     bookmarksController.setPkg(selectedPackage);
                     overviewController.toggleButtons(!selectedPackage.isEmpty());
 
-                    if (selectedPackage.isEmpty() && getLocationPackage().isBlank()) {                        
+                    if (selectedPackage.isEmpty() && getLocationPackage().isBlank()) {
                         overviewController.clearPkgData();
                         filesController.clear();
                         revisionsController.clear();
-                        requestsController.clear();
+                        
+                        // Package list arrives after requests,
+                        // so do not clear requests. See load()
+                        if (loaded) {
+                            loaded = false;
+                            // Set to null, so that projectA/package to projectA
+                            // then tab switch to requests, fetches them
+                            requestsController.setPrj(null);
+                        } else {
+                            requestsController.clear();
+                        }
 
                         return;
                     }
@@ -408,11 +421,11 @@ public class BrowserController implements Initializable {
         tabPane.getSelectionModel().selectedIndexProperty().addListener((var ov, var t, var t1) -> {            
             logger.log(Level.INFO, "old tab {0}, new tab {1}", 
                     new Object[]{t.intValue(), t1.intValue()});
+            logger.log(Level.INFO, "changedMode is {0}", changedMode);
             
             // Avoid fetching requests twice when going from project to project/package (and viceversa);
             // tabs are added/removed, so tab index changes which triggers this listener
-            logger.log(Level.INFO, "changedMode is {0}", changedMode);
-            if (changedMode) {
+            if (changedMode && !(t1.intValue() == 1 || t1.intValue() == 3)) {
                 changedMode = false;
                 return;
             }
@@ -422,7 +435,7 @@ public class BrowserController implements Initializable {
 
             switch (t1.intValue()) {
                 case 0:
-                    logger.info("Overview tab visible");;
+                    logger.info("Overview tab visible");
                     if (!prj.isBlank() && !prj.equals(overviewController.getPrj()) && pkg.isBlank()) {
                         overviewController.clearPkgData();
                         startPrjMetaConfigTask(prj);
