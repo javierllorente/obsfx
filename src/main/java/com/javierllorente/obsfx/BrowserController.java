@@ -713,10 +713,9 @@ public class BrowserController implements Initializable {
         new Thread(projectsTask).start();
         projectsTask.setOnSucceeded((t) -> {
             projects = projectsTask.getValue();
-            if (!locationTextField.getText().isBlank()) {
-                // Load homepage
-                load(locationTextField.getText());
-            }
+            String homepage = preferences.get(App.HOMEPAGE,
+                    "home:" + App.getOBS().getUsername());
+            goTo(homepage);
             progressIndicator.setVisible(false);
         });
         projectsTask.setOnFailed((t) -> {
