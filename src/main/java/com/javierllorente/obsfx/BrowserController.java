@@ -172,7 +172,11 @@ public class BrowserController implements Initializable {
             String homepage = preferences.get(App.HOMEPAGE, "home:" + username);
             locationTextField.setText(homepage);
         }
-        Platform.runLater(() -> locationTextField.requestFocus());
+
+        Platform.runLater(() -> {
+            locationTextField.requestFocus();
+            locationTextField.end();
+        });        
 
         bookmarksController.setBrowserController(this);
         overviewController.setBrowserController(this);
