@@ -167,6 +167,11 @@ public class BrowserController implements Initializable {
         initPackageListView();
         initTabPane();
 
+        String username = preferences.get(App.USERNAME, "");
+        if (!username.isBlank()) {
+            String homepage = preferences.get(App.HOMEPAGE, "home:" + username);
+            locationTextField.setText(homepage);
+        }
         Platform.runLater(() -> locationTextField.requestFocus());
 
         bookmarksController.setBrowserController(this);
@@ -698,6 +703,10 @@ public class BrowserController implements Initializable {
         new Thread(projectsTask).start();
         projectsTask.setOnSucceeded((t) -> {
             projects = projectsTask.getValue();
+            if (!locationTextField.getText().isBlank()) {
+                // Load homepage
+                load(locationTextField.getText());
+            }
             progressIndicator.setVisible(false);
         });
         projectsTask.setOnFailed((t) -> {
@@ -773,7 +782,7 @@ public class BrowserController implements Initializable {
 
     public void autoLogin() {
         if (preferences.getBoolean(App.AUTOLOGIN, false)) {
-            handleLogin();
+            handleLogin();            
         }
     }
     
@@ -993,6 +1002,7 @@ public class BrowserController implements Initializable {
         preferences.put(App.USERNAME, data.get(App.USERNAME));
         preferences.put(App.PASSWORD, data.get(App.PASSWORD));
         preferences.put(App.API_URI, data.get(App.API_URI));
+        preferences.put(App.HOMEPAGE, data.get(App.HOMEPAGE));
         preferences.put(App.AUTOLOGIN, data.get(App.AUTOLOGIN));
     }
     

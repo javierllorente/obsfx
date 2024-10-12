@@ -44,6 +44,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 public class SettingsDialog extends Dialog<Map<String, String>> {
     
     private TextField apiUriField;
+    private TextField homepageField;
 
     public SettingsDialog(Window window, Preferences preferences) {
         super();
@@ -82,6 +83,10 @@ public class SettingsDialog extends Dialog<Map<String, String>> {
         apiUriField.setPrefWidth(260.0);
         apiUriField.setText(preferences.get(App.API_URI, ""));
         
+        homepageField = new TextField();
+        homepageField.setPrefWidth(260.0);
+        homepageField.setText(preferences.get(App.HOMEPAGE, ""));
+        
         CheckBox autoLoginCheckBox = new CheckBox();
         autoLoginCheckBox.setSelected(preferences.getBoolean(App.AUTOLOGIN, false));
 
@@ -91,8 +96,10 @@ public class SettingsDialog extends Dialog<Map<String, String>> {
         gridPane.add(passwordField, 1, 1);
         gridPane.add(new Label(App.getBundle().getString("settings.apiuri")), 0, 2);
         gridPane.add(apiUriField, 1, 2);
-        gridPane.add(new Label(App.getBundle().getString("settings.autologin")), 0, 3);
-        gridPane.add(autoLoginCheckBox, 1, 3);
+        gridPane.add(new Label(App.getBundle().getString("settings.homepage")), 0, 3);
+        gridPane.add(homepageField, 1, 3);
+        gridPane.add(new Label(App.getBundle().getString("settings.autologin")), 0, 4);
+        gridPane.add(autoLoginCheckBox, 1, 4);
         
         getDialogPane().setContent(gridPane);
         setResizable(true); // FIXME: Workaround for JavaFX 11
@@ -113,6 +120,7 @@ public class SettingsDialog extends Dialog<Map<String, String>> {
                     Logger.getLogger(SettingsDialog.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 data.put(App.API_URI, apiUriField.getText());
+                data.put(App.HOMEPAGE, homepageField.getText());
                 data.put(App.AUTOLOGIN, String.valueOf(autoLoginCheckBox.isSelected()));
                 return data;
             }
