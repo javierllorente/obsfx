@@ -242,6 +242,12 @@ public class BrowserController implements Initializable {
     
     private void load(String location) {
         logger.log(Level.INFO, "location = {0}", location);
+        
+        if (!App.getOBS().isAuthenticated()) {
+            showNotAuthenticatedAlert();
+            return;
+        }
+        
         currentProject = getLocationProject();
         currentPackage = getLocationPackage();
         startPackagesTask();
