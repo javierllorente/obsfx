@@ -1012,6 +1012,13 @@ public class BrowserController implements Initializable {
     }
     
     private void clear() {
+        locationTextField.clear();
+        currentProject = "";
+        currentPackage = "";
+        overviewController.clear();
+        filesController.clear();
+        revisionsController.clear();
+        requestsController.clear();
         packagesListView.getSelectionModel().clearSelection();
         packagesObservableList.clear();
     }
