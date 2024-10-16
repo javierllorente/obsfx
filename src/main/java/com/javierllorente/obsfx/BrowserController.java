@@ -265,6 +265,7 @@ public class BrowserController implements Initializable {
     
     public void goTo(String location) {
         locationTextField.setText(location);
+        locationTextField.end();
         load(location);
     }
     
