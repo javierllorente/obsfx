@@ -267,6 +267,7 @@ public class BrowserController implements Initializable {
         locationTextField.setText(location);
         locationTextField.end();
         load(location);
+        tabPane.requestFocus();
     }
     
     private void handleProjectTasks() {
