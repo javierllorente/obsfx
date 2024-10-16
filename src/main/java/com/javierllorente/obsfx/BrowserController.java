@@ -167,12 +167,6 @@ public class BrowserController implements Initializable {
         initPackageListView();
         initTabPane();
 
-        String username = preferences.get(App.USERNAME, "");
-        if (!username.isBlank()) {
-            String homepage = preferences.get(App.HOMEPAGE, "home:" + username);
-            locationTextField.setText(homepage);
-        }
-
         Platform.runLater(() -> {
             locationTextField.requestFocus();
             locationTextField.end();
@@ -712,10 +706,7 @@ public class BrowserController implements Initializable {
         progressIndicator.setVisible(true);        
         new Thread(projectsTask).start();
         projectsTask.setOnSucceeded((t) -> {
-            projects = projectsTask.getValue();
-            String homepage = preferences.get(App.HOMEPAGE,
-                    "home:" + App.getOBS().getUsername());
-            goTo(homepage);
+            projects = projectsTask.getValue();   
             progressIndicator.setVisible(false);
         });
         projectsTask.setOnFailed((t) -> {
@@ -853,6 +844,9 @@ public class BrowserController implements Initializable {
             protected void succeeded() {
                 super.succeeded();
                 if (App.getOBS().isAuthenticated()) {
+                    String homepage = preferences.get(App.HOMEPAGE,
+                            "home:" + App.getOBS().getUsername());
+                    goTo(homepage);
                     startProjectsTask();
                     loadBookmarks();
                 } else {
