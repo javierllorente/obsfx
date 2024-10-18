@@ -129,8 +129,10 @@ public class OverviewController implements Initializable {
                 link.setText("");
             }
             projectProperty.set(pkgMetaConfig.getProject());
+            packageProperty.set(metaConfig.getName());
         } else {
             projectProperty.set(metaConfig.getName());
+            packageProperty.set(null);
         }
         
         String configDescription = metaConfig.getDescription();
@@ -138,8 +140,6 @@ public class OverviewController implements Initializable {
             configDescription = App.getBundle().getString("overview.nodescription");
         }        
         description.setText(configDescription);
-        
-        packageProperty.set(metaConfig.getName());
     }
     
     public void setBuildLog(String buildLog) {
