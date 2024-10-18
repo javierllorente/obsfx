@@ -106,6 +106,7 @@ public class OverviewController implements Initializable {
         refreshButton.disableProperty().bind((packageProperty.isNull()));
         downloadButton.disableProperty().bind(packageProperty.isNull());
         link.managedProperty().bind(link.textProperty().isNotEmpty());
+        buildResultsTable.visibleProperty().bind(packageProperty.isNotNull());
     }
     
     public void setBrowserController(BrowserController browserController) {
