@@ -8,6 +8,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
@@ -24,6 +25,13 @@
                       </Label>
                       <Hyperlink fx:id="link" />
                       <Label fx:id="description" wrapText="true" VBox.vgrow="ALWAYS" />
+                      <Pane prefHeight="10.0" />
+                      <HBox spacing="2.0">
+                          <children>
+                              <Label fx:id="packagesLabel" text="%overview.packages" />
+                              <Label fx:id="packages" visible="false" />
+                          </children>
+                      </HBox>
                   </children>
               </VBox>
             <VBox>

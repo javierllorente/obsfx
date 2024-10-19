@@ -55,6 +55,8 @@ import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import javafx.application.HostServices;
 import javafx.application.Platform;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -97,6 +99,7 @@ public class BrowserController implements Initializable {
     private List<String> projects;
     private FilteredList<String> filteredPackages;
     private ObservableList<String> packagesObservableList;
+    private ListProperty<String> packagesListProperty;
     private HostServices hostServices;
     private ObservableList<OBSPackage> searchResults;
     private boolean changedMode;
@@ -165,7 +168,7 @@ public class BrowserController implements Initializable {
         initLocationTextField();
         initSearchTextField();
         initPackageListView();
-        initTabPane();
+        initTabPane();      
 
         Platform.runLater(() -> {
             locationTextField.requestFocus();
@@ -400,6 +403,8 @@ public class BrowserController implements Initializable {
                 });
 
         packagesObservableList = FXCollections.observableArrayList();
+        packagesListProperty = new SimpleListProperty<>(packagesObservableList);
+        overviewController.packageCountProperty().bind(packagesListProperty.sizeProperty().asString());
         filteredPackages = new FilteredList<>(packagesObservableList, (String s) -> true);
         SortedList<String> sortedPackages = new SortedList<>(filteredPackages, new Comparator<String>() {
             @Override

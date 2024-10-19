@@ -75,6 +75,12 @@ public class OverviewController implements Initializable {
     private FontIcon historyIcon;
     
     @FXML
+    private Label packagesLabel;
+    
+    @FXML
+    private Label packages;
+    
+    @FXML
     private Label latestRevision;
     
     @FXML
@@ -82,6 +88,7 @@ public class OverviewController implements Initializable {
 
     StringProperty projectProperty;
     StringProperty packageProperty;
+    StringProperty packageCountProperty;
     private final SimpleDateFormat dateFormat;
     private BrowserController browserController;
     private LogViewerController logViewerController;
@@ -100,6 +107,7 @@ public class OverviewController implements Initializable {
         initBuildResultsColumns();
         projectProperty = new SimpleStringProperty();
         packageProperty = new SimpleStringProperty();
+        packageCountProperty = new SimpleStringProperty();
         
         viewLogButton.disableProperty().bind(packageProperty.isNull()
                 .or(buildResultsTable.getSelectionModel().selectedItemProperty().isNull()));        
@@ -107,6 +115,10 @@ public class OverviewController implements Initializable {
         downloadButton.disableProperty().bind(packageProperty.isNull());
         link.managedProperty().bind(link.textProperty().isNotEmpty());
         buildResultsTable.visibleProperty().bind(packageProperty.isNotNull());
+        
+        packagesLabel.visibleProperty().bind(packageProperty.isNull());
+        packages.visibleProperty().bind(packageProperty.isNull());
+        packages.textProperty().bind(packageCountProperty);
     }
     
     public void setBrowserController(BrowserController browserController) {
@@ -145,6 +157,10 @@ public class OverviewController implements Initializable {
     
     public void setBuildLog(String buildLog) {
         logViewerController.setText(buildLog);
+    }
+
+    public StringProperty packageCountProperty() {
+        return packageCountProperty;
     }
     
     public void setLatestRevision(OBSRevision revision) {
@@ -280,5 +296,5 @@ public class OverviewController implements Initializable {
         refreshButton.setVisible(visible);
         downloadButton.setVisible(visible);
     }
-
+    
 }

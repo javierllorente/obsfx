@@ -10,3 +10,9 @@
     -fx-background-position: left center;
     -fx-padding: 4 4 4 20;
 }
+
+#packages {
+    -fx-background-color: gray;
+    -fx-text-fill: white;
+    -fx-label-padding: 0 2 0 2;
+}
