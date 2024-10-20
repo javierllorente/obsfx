@@ -116,8 +116,10 @@ public class OverviewController implements Initializable {
         link.managedProperty().bind(link.textProperty().isNotEmpty());
         buildResultsTable.visibleProperty().bind(packageProperty.isNotNull());
         
-        packagesLabel.visibleProperty().bind(packageProperty.isNull());
-        packages.visibleProperty().bind(packageProperty.isNull());
+        packagesLabel.visibleProperty().bind(projectProperty.isNotNull()
+                .and(packageProperty.isNull()));
+        packages.visibleProperty().bind(projectProperty.isNotNull()
+                .and(packageProperty.isNull()));
         packages.textProperty().bind(packageCountProperty);
     }
     
