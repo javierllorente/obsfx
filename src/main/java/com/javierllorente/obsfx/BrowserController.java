@@ -446,49 +446,55 @@ public class BrowserController implements Initializable {
                 return;
             }
             
-            String prj = currentProject;
-            String pkg = currentPackage;
+            if (currentProject.isBlank()) {
+                return;
+            }
 
             switch (t1.intValue()) {
                 case 0:
                     logger.info("Overview tab visible");
-                    if (!prj.isBlank() && !prj.equals(overviewController.getPrj()) && pkg.isBlank()) {
+                    if (!currentProject.equals(overviewController.getPrj()) 
+                            && currentPackage.isBlank()) {
                         overviewController.clearPkgData();
-                        startPrjMetaConfigTask(prj);
-                    } else if (!prj.isBlank() && !pkg.isBlank() && !pkg.equals(overviewController.getPkg())) {
+                        startPrjMetaConfigTask(currentProject);
+                    } else if (!currentPackage.isBlank() 
+                            && !currentPackage.equals(overviewController.getPkg())) {
                         overviewController.clear();
-                        startPkgMetaConfigTask(prj, pkg);
-                        startLatestRevisionTask(prj, pkg);
-                        startBuildResultsTask(prj, pkg);
+                        startPkgMetaConfigTask(currentProject, currentPackage);
+                        startLatestRevisionTask(currentProject, currentPackage);
+                        startBuildResultsTask(currentProject, currentPackage);
                     }
                     break;
                 case 1:
-                    if (!prj.isBlank() && !prj.equals(requestsController.getPrj()) && pkg.isBlank() 
+                    if (!currentProject.equals(requestsController.getPrj()) 
+                            && currentPackage.isBlank() 
                             && getLocationPackage().isBlank()) {
                         logger.info("Requests tab visible");
                         requestsController.clear();
-                        startProjectRequestsTask(prj);
-                    } else if (!prj.isBlank() && !pkg.isBlank() && !pkg.equals(filesController.getPkg())) {
+                        startProjectRequestsTask(currentProject);
+                    } else if (!currentPackage.isBlank() 
+                            && !currentPackage.equals(filesController.getPkg())) {
                         logger.info("Files tab visible");
                         filesController.clear();
-                        startFilesTask(prj, pkg);
+                        startFilesTask(currentProject, currentPackage);
                     }
                     break;
                 case 2:
                     logger.info("Revision tab visible");
-                    if (!prj.isBlank() && !pkg.isBlank() && !pkg.equals(revisionsController.getPkg())) {
+                    if (!currentPackage.isBlank() 
+                            && !currentPackage.equals(revisionsController.getPkg())) {
                         revisionsController.clear();
-                        startRevisionsTask(prj, pkg);
+                        startRevisionsTask(currentProject, currentPackage);
                     }
                     break;
                 case 3:
                     logger.info("Requests tab visible");
-                    if (!prj.equals(requestsController.getPrj()) 
-                            && pkg.equals(requestsController.getPkg())
-                            || !prj.isBlank() && !pkg.isBlank() 
-                            && !pkg.equals(requestsController.getPkg())) {
+                    if (!currentProject.equals(requestsController.getPrj()) 
+                            && currentPackage.equals(requestsController.getPkg())
+                            || !currentPackage.isBlank() 
+                            && !currentPackage.equals(requestsController.getPkg())) {
                         requestsController.clear();
-                        startRequestsTask(prj, pkg);
+                        startRequestsTask(currentProject, currentPackage);
                     }
                     break;
             }
