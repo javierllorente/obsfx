@@ -86,9 +86,9 @@ public class OverviewController implements Initializable {
     @FXML
     private TableView<OBSResult> buildResultsTable;
 
-    StringProperty projectProperty;
-    StringProperty packageProperty;
-    StringProperty packageCountProperty;
+    private StringProperty projectProperty;
+    private StringProperty packageProperty;
+    private StringProperty packageCountProperty;
     private final SimpleDateFormat dateFormat;
     private BrowserController browserController;
     private LogViewerController logViewerController;
