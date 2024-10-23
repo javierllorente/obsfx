@@ -250,6 +250,7 @@ public class BrowserController implements Initializable {
         startPackagesTask();
         
         overviewController.setDataLoaded(false);
+        requestsController.clear();
         
         if (getLocationPackage().isBlank()) {
             tabPane.getTabs().remove(filesTab);
@@ -278,11 +279,9 @@ public class BrowserController implements Initializable {
         logger.log(Level.INFO, "tabIndex = {0}", tabIndex);
         switch (tabIndex) {
             case 0 -> {
-                overviewController.clear();
                 startPrjMetaConfigTask(getLocationProject());
             }
             case 1 -> {
-                requestsController.clear();
                 startProjectRequestsTask(getLocationProject());
             }
         }
@@ -296,7 +295,6 @@ public class BrowserController implements Initializable {
         
         switch (tabIndex) {
             case 0 -> {
-                overviewController.clear();
                 startPkgMetaConfigTask(prj, pkg);
                 startLatestRevisionTask(prj, pkg);
                 startBuildResultsTask(prj, pkg);
@@ -310,7 +308,6 @@ public class BrowserController implements Initializable {
                 startRevisionsTask(prj, pkg);
             }
             case 3 -> {
-                requestsController.clear();
                 startRequestsTask(prj, pkg);
             }
         }
