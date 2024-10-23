@@ -258,15 +258,13 @@ public class BrowserController implements Initializable {
         }
         
         loaded = true;
-        changedMode = (!lastPackage.isBlank() && currentPackage.isBlank())
-                || (lastPackage.isBlank() && !currentPackage.isBlank());
         logger.log(Level.INFO, "changedMode = {0}", changedMode);
-        
-        lastProject = getLocationProject();
-        lastPackage = getLocationPackage();        
     }
     
     public void goTo(String location) {
+        lastProject = getLocationProject();
+        lastPackage = getLocationPackage();
+        
         locationTextField.setText(location);
         locationTextField.end();
         load(location);
@@ -498,8 +496,6 @@ public class BrowserController implements Initializable {
                     }
                     break;
             }
-            lastProject = currentProject;
-            lastPackage = currentPackage;
         });
     }
 
