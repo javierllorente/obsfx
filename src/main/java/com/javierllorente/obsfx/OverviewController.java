@@ -290,7 +290,6 @@ public class OverviewController implements Initializable {
     }
     
     public void clearPkgData() {
-        projectProperty.set(null);
         packageProperty.set(null);
         link.setText(null);
         clearLatestRevision();
