@@ -89,6 +89,7 @@ public class OverviewController implements Initializable {
     private StringProperty projectProperty;
     private StringProperty packageProperty;
     private StringProperty packageCountProperty;
+    private boolean dataLoaded;
     private final SimpleDateFormat dateFormat;
     private BrowserController browserController;
     private LogViewerController logViewerController;
@@ -108,6 +109,7 @@ public class OverviewController implements Initializable {
         projectProperty = new SimpleStringProperty();
         packageProperty = new SimpleStringProperty();
         packageCountProperty = new SimpleStringProperty();
+        dataLoaded = false;
         
         viewLogButton.disableProperty().bind(packageProperty.isNull()
                 .or(buildResultsTable.getSelectionModel().selectedItemProperty().isNull()));        
@@ -155,6 +157,7 @@ public class OverviewController implements Initializable {
             configDescription = App.getBundle().getString("overview.nodescription");
         }        
         description.setText(configDescription);
+        dataLoaded = true;
     }
     
     public void setBuildLog(String buildLog) {
@@ -163,6 +166,14 @@ public class OverviewController implements Initializable {
 
     public StringProperty packageCountProperty() {
         return packageCountProperty;
+    }
+
+    public boolean isDataLoaded() {
+        return dataLoaded;
+    }
+
+    public void setDataLoaded(boolean dataLoaded) {
+        this.dataLoaded = dataLoaded;
     }
     
     public void setLatestRevision(OBSRevision revision) {
@@ -291,6 +302,7 @@ public class OverviewController implements Initializable {
         description.setText(null);
         projectProperty.set(null);
         clearPkgData();
+        dataLoaded = false;
     }
     
     public void toggleButtons(boolean visible) {
