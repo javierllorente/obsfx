@@ -249,6 +249,8 @@ public class BrowserController implements Initializable {
         currentPackage = getLocationPackage();
         startPackagesTask();
         
+        overviewController.setDataLoaded(false);
+        
         if (getLocationPackage().isBlank()) {
             tabPane.getTabs().remove(filesTab);
             tabPane.getTabs().remove(revisionsTab);
@@ -349,10 +351,12 @@ public class BrowserController implements Initializable {
                         return;
                     }
                     
+                    // project -> project/package
                     if (tabPane.getTabs().indexOf(filesTab) == -1 && 
                             tabPane.getTabs().indexOf(revisionsTab) == -1) {
                         tabPane.getTabs().add(1, filesTab);
                         tabPane.getTabs().add(2, revisionsTab);
+                        overviewController.setDataLoaded(false);
                         changedMode = true;
                     }
                     
@@ -451,12 +455,10 @@ public class BrowserController implements Initializable {
             switch (t1.intValue()) {
                 case 0:
                     logger.info("Overview tab visible");
-                    if (!currentProject.equals(overviewController.getPrj()) 
-                            && currentPackage.isBlank()) {
+                    if (currentPackage.isBlank() && !overviewController.isDataLoaded()) {
                         overviewController.clearPkgData();
                         startPrjMetaConfigTask(currentProject);
-                    } else if (!currentPackage.isBlank() 
-                            && !currentPackage.equals(overviewController.getPkg())) {
+                    } else if (!currentPackage.isBlank() && !overviewController.isDataLoaded()) {
                         overviewController.clear();
                         startPkgMetaConfigTask(currentProject, currentPackage);
                         startLatestRevisionTask(currentProject, currentPackage);
