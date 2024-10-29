@@ -102,7 +102,6 @@ public class BrowserController implements Initializable {
     private ListProperty<String> packagesListProperty;
     private HostServices hostServices;
     private ObservableList<OBSPackage> searchResults;
-    private boolean changedMode;
     private boolean loaded;
     private String currentProject;
     private String currentPackage;
@@ -255,13 +254,12 @@ public class BrowserController implements Initializable {
         if (getLocationPackage().isBlank()) {
             tabPane.getTabs().remove(filesTab);
             tabPane.getTabs().remove(revisionsTab);
-                handleProjectTasks(); 
+            handleProjectTasks();
         } else {
-                handlePackageTasks();
-            }
+            handlePackageTasks();
+        }
         
         loaded = true;
-        logger.log(Level.INFO, "changedMode = {0}", changedMode);
     }
     
     public void goTo(String location) {
@@ -321,7 +319,6 @@ public class BrowserController implements Initializable {
                     String prj = currentProject;
                     
                     String selectedPackage = (newValue == null) ? "" : newValue;                    
-                    
                     currentPackage = selectedPackage;
                     
                     logger.log(Level.INFO, "selectedPackage = {0}", selectedPackage);
@@ -329,6 +326,7 @@ public class BrowserController implements Initializable {
                     bookmarksController.setPkg(selectedPackage);
                     overviewController.toggleButtons(!selectedPackage.isEmpty());
 
+                    // project/package -> project
                     if (selectedPackage.isEmpty() && getLocationPackage().isBlank()) {
                         overviewController.clearPkgData();
                         filesController.clear();
@@ -355,7 +353,6 @@ public class BrowserController implements Initializable {
                         tabPane.getTabs().add(2, revisionsTab);
                         overviewController.setDataLoaded(false);
                         requestsController.setDataLoaded(false);
-                        changedMode = true;
                     }
                     
                     // Achtung! selectedPackage is empty when projectA/package -> projectB/package
@@ -365,8 +362,8 @@ public class BrowserController implements Initializable {
                     
                     locationTextField.setText(prj + "/" + selectedPackage);
                     int tabIndex = tabPane.getSelectionModel().getSelectedIndex();
-
                     logger.log(Level.INFO, "Tab index = {0}", tabIndex);
+                    
                     switch (tabIndex) {
                         case 0:
                             startPkgMetaConfigTask(prj, selectedPackage);
@@ -380,26 +377,12 @@ public class BrowserController implements Initializable {
                             startRevisionsTask(prj, selectedPackage);
                             break;
                         case 3:                            
-                            if (changedMode) {
-                                changedMode = false;
-                                return;
-                            }
-                            
-                            if ((!prj.equals(requestsController.getPrj())
-                                    && !selectedPackage.equals(requestsController.getPkg())
-                                    || prj.equals(requestsController.getPrj())
-                                    && !selectedPackage.equals(requestsController.getPkg()))
-                                    || !prj.equals(requestsController.getPrj()) 
-                                    && selectedPackage.equals(requestsController.getPkg())) {
-                                requestsController.clear();
-                                startRequestsTask(prj, selectedPackage);
-                            }
+                            startRequestsTask(prj, selectedPackage);
                             break;
                     }
                     
                     lastProject = currentProject;
                     lastPackage = currentPackage;
-                    changedMode = false;
                 });
 
         packagesObservableList = FXCollections.observableArrayList();
@@ -432,17 +415,15 @@ public class BrowserController implements Initializable {
     private void initTabPane() {
         tabPane.getTabs().remove(filesTab);
         tabPane.getTabs().remove(revisionsTab);
-        changedMode = false;
 
         tabPane.getSelectionModel().selectedIndexProperty().addListener((var ov, var t, var t1) -> {            
             logger.log(Level.INFO, "old tab {0}, new tab {1}", 
                     new Object[]{t.intValue(), t1.intValue()});            
-            logger.log(Level.INFO, "changedMode is {0}", changedMode);
             
             // Avoid fetching requests twice when going from project to project/package (and viceversa);
             // tabs are added/removed, so tab index changes which triggers this listener
-            if (changedMode && !(t1.intValue() == 1 || t1.intValue() == 3)) {
-                changedMode = false;
+            if ((lastPackage.isBlank() && !currentPackage.isBlank() && t1.intValue() == 3)
+                    || (!lastPackage.isBlank() && currentPackage.isBlank() && t1.intValue() == 1)) {
                 return;
             }
             
