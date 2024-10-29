@@ -255,10 +255,10 @@ public class BrowserController implements Initializable {
         if (getLocationPackage().isBlank()) {
             tabPane.getTabs().remove(filesTab);
             tabPane.getTabs().remove(revisionsTab);
-            handleProjectTasks(); 
+                handleProjectTasks(); 
         } else {
-            handlePackageTasks();
-        }
+                handlePackageTasks();
+            }
         
         loaded = true;
         logger.log(Level.INFO, "changedMode = {0}", changedMode);
@@ -320,7 +320,7 @@ public class BrowserController implements Initializable {
                     logger.log(Level.INFO, "1. locationPackage = {0}", getLocationPackage());                    
                     String prj = currentProject;
                     
-                    String selectedPackage = (newValue == null) ? "" : newValue;
+                    String selectedPackage = (newValue == null) ? "" : newValue;                    
                     
                     currentPackage = selectedPackage;
                     
@@ -354,6 +354,7 @@ public class BrowserController implements Initializable {
                         tabPane.getTabs().add(1, filesTab);
                         tabPane.getTabs().add(2, revisionsTab);
                         overviewController.setDataLoaded(false);
+                        requestsController.setDataLoaded(false);
                         changedMode = true;
                     }
                     
@@ -378,7 +379,7 @@ public class BrowserController implements Initializable {
                         case 2:
                             startRevisionsTask(prj, selectedPackage);
                             break;
-                        case 3:
+                        case 3:                            
                             if (changedMode) {
                                 changedMode = false;
                                 return;
@@ -435,7 +436,7 @@ public class BrowserController implements Initializable {
 
         tabPane.getSelectionModel().selectedIndexProperty().addListener((var ov, var t, var t1) -> {            
             logger.log(Level.INFO, "old tab {0}, new tab {1}", 
-                    new Object[]{t.intValue(), t1.intValue()});
+                    new Object[]{t.intValue(), t1.intValue()});            
             logger.log(Level.INFO, "changedMode is {0}", changedMode);
             
             // Avoid fetching requests twice when going from project to project/package (and viceversa);
@@ -463,14 +464,12 @@ public class BrowserController implements Initializable {
                     }
                     break;
                 case 1:
-                    if (!currentProject.equals(requestsController.getPrj()) 
-                            && currentPackage.isBlank() 
-                            && getLocationPackage().isBlank()) {
+                    if (currentPackage.isBlank() && getLocationPackage().isBlank()
+                            && !requestsController.isDataLoaded()) {
                         logger.info("Requests tab visible");
                         requestsController.clear();
                         startProjectRequestsTask(currentProject);
-                    } else if (!currentPackage.isBlank() 
-                            && !currentPackage.equals(filesController.getPkg())) {
+                    } else if (!currentPackage.isBlank() && !filesController.isDataLoaded()) {
                         logger.info("Files tab visible");
                         filesController.clear();
                         startFilesTask(currentProject, currentPackage);
@@ -478,18 +477,14 @@ public class BrowserController implements Initializable {
                     break;
                 case 2:
                     logger.info("Revision tab visible");
-                    if (!currentPackage.isBlank() 
-                            && !currentPackage.equals(revisionsController.getPkg())) {
+                    if (!currentPackage.isBlank() && !revisionsController.isDataLoaded()) {
                         revisionsController.clear();
                         startRevisionsTask(currentProject, currentPackage);
                     }
                     break;
                 case 3:
                     logger.info("Requests tab visible");
-                    if (!currentProject.equals(requestsController.getPrj()) 
-                            && currentPackage.equals(requestsController.getPkg())
-                            || !currentPackage.isBlank() 
-                            && !currentPackage.equals(requestsController.getPkg())) {
+                    if (!currentPackage.isBlank() && !requestsController.isDataLoaded()) {
                         requestsController.clear();
                         startRequestsTask(currentProject, currentPackage);
                     }
