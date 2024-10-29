@@ -255,8 +255,6 @@ public class BrowserController implements Initializable {
             tabPane.getTabs().remove(filesTab);
             tabPane.getTabs().remove(revisionsTab);
             handleProjectTasks();
-        } else {
-            handlePackageTasks();
         }
         
         loaded = true;
@@ -281,32 +279,6 @@ public class BrowserController implements Initializable {
             }
             case 1 -> {
                 startProjectRequestsTask(getLocationProject());
-            }
-        }
-    }
-    
-    private void handlePackageTasks() {
-        int tabIndex = tabPane.getSelectionModel().getSelectedIndex();
-        logger.log(Level.INFO, "tabIndex = {0}", tabIndex);
-        String prj = getLocationProject();
-        String pkg = getLocationPackage();
-        
-        switch (tabIndex) {
-            case 0 -> {
-                startPkgMetaConfigTask(prj, pkg);
-                startLatestRevisionTask(prj, pkg);
-                startBuildResultsTask(prj, pkg);
-            }
-            case 1 -> {
-                filesController.clear();
-                startFilesTask(prj, pkg);
-            }
-            case 2 -> {
-                revisionsController.clear();
-                startRevisionsTask(prj, pkg);
-            }
-            case 3 -> {
-                startRequestsTask(prj, pkg);
             }
         }
     }
