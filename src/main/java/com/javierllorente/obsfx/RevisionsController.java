@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import javafx.scene.text.Text;
  *
  * @author javier
  */
-public class RevisionsController implements Initializable {
+public class RevisionsController extends DataController implements Initializable {
 
     private String pkg;
     
@@ -107,6 +107,7 @@ public class RevisionsController implements Initializable {
     public void set(List<OBSRevision> revisions) {
         revisionsTable.getItems().setAll(revisions);
         revisionsTable.sort();
+        dataLoaded = true;
     }
 
     public String getPkg() {
@@ -119,6 +120,7 @@ public class RevisionsController implements Initializable {
     
     public void clear() {
         revisionsTable.getItems().clear();
+        dataLoaded = false;
     }
     
     public boolean isEmpty() {

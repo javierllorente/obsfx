@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
  *
  * @author javier
  */
-public class FilesController implements Initializable {
+public class FilesController extends DataController implements Initializable {
     
     private String pkg;
 
@@ -78,6 +78,7 @@ public class FilesController implements Initializable {
     public void set(List<OBSFile> files) {
         filesTable.getItems().setAll(files);
         filesTable.sort();
+        dataLoaded = false;
     }
 
     public String getPkg() {
@@ -91,6 +92,7 @@ public class FilesController implements Initializable {
     public void clear() {
         filesTable.getItems().clear();
         pkg = null;
+        dataLoaded = false;
     }
     
     public boolean isEmpty() {

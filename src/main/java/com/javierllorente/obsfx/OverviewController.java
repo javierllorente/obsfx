@@ -51,7 +51,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
  *
  * @author javier
  */
-public class OverviewController implements Initializable {
+public class OverviewController extends DataController implements Initializable {
 
     @FXML
     private Label title;
@@ -89,7 +89,6 @@ public class OverviewController implements Initializable {
     private StringProperty projectProperty;
     private StringProperty packageProperty;
     private StringProperty packageCountProperty;
-    private boolean dataLoaded;
     private final SimpleDateFormat dateFormat;
     private BrowserController browserController;
     private LogViewerController logViewerController;
@@ -109,7 +108,6 @@ public class OverviewController implements Initializable {
         projectProperty = new SimpleStringProperty();
         packageProperty = new SimpleStringProperty();
         packageCountProperty = new SimpleStringProperty();
-        dataLoaded = false;
         
         viewLogButton.disableProperty().bind(packageProperty.isNull()
                 .or(buildResultsTable.getSelectionModel().selectedItemProperty().isNull()));        
@@ -166,14 +164,6 @@ public class OverviewController implements Initializable {
 
     public StringProperty packageCountProperty() {
         return packageCountProperty;
-    }
-
-    public boolean isDataLoaded() {
-        return dataLoaded;
-    }
-
-    public void setDataLoaded(boolean dataLoaded) {
-        this.dataLoaded = dataLoaded;
     }
     
     public void setLatestRevision(OBSRevision revision) {

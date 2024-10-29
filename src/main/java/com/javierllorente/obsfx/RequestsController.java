@@ -34,7 +34,7 @@ import javafx.scene.text.Text;
  *
  * @author javier
  */
-public class RequestsController implements Initializable {
+public class RequestsController extends DataController implements Initializable {
 
     private String prj;
     private String pkg;
@@ -106,6 +106,7 @@ public class RequestsController implements Initializable {
     public void set(List<OBSRequest> requests) {
         requestsTable.getItems().setAll(requests);
         requestsTable.sort();
+        dataLoaded = true;
     }
 
     public String getPrj() {
@@ -127,6 +128,7 @@ public class RequestsController implements Initializable {
     public void clear() {
         prj = null;
         requestsTable.getItems().clear();
+        dataLoaded = false;
     }
     
     public boolean isEmpty() {
