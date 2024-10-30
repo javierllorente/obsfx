@@ -59,6 +59,7 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.collections.transformation.FilteredList;
@@ -102,6 +103,7 @@ public class BrowserController implements Initializable {
     private ListProperty<String> packagesListProperty;
     private HostServices hostServices;
     private ObservableList<OBSPackage> searchResults;
+    private boolean tabsChanged;
     private boolean loaded;
     private String currentProject;
     private String currentPackage;
@@ -158,6 +160,7 @@ public class BrowserController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         preferences = Preferences.userNodeForPackage(getClass());
+        tabsChanged = false;
         loaded = false;
         currentProject = "";
         currentPackage = "";
@@ -276,6 +279,7 @@ public class BrowserController implements Initializable {
         switch (tabIndex) {
             case 0 -> {
                 startPrjMetaConfigTask(getLocationProject());
+                tabsChanged = false;
             }
             case 1 -> {
                 startProjectRequestsTask(getLocationProject());
@@ -341,6 +345,7 @@ public class BrowserController implements Initializable {
                             startPkgMetaConfigTask(prj, selectedPackage);
                             startLatestRevisionTask(prj, selectedPackage);
                             startBuildResultsTask(prj, selectedPackage);
+                            tabsChanged = false;
                             break;
                         case 1:
                             startFilesTask(prj, selectedPackage);
@@ -350,6 +355,7 @@ public class BrowserController implements Initializable {
                             break;
                         case 3:                            
                             startRequestsTask(prj, selectedPackage);
+                            tabsChanged = false;
                             break;
                     }
                     
@@ -387,15 +393,20 @@ public class BrowserController implements Initializable {
     private void initTabPane() {
         tabPane.getTabs().remove(filesTab);
         tabPane.getTabs().remove(revisionsTab);
+        
+        // Tabs have been added/removed
+        tabPane.getTabs().addListener((ListChangeListener.Change<? extends Tab> change) -> {
+            tabsChanged = true;
+        });
 
         tabPane.getSelectionModel().selectedIndexProperty().addListener((var ov, var t, var t1) -> {            
             logger.log(Level.INFO, "old tab {0}, new tab {1}", 
-                    new Object[]{t.intValue(), t1.intValue()});            
-            
+                    new Object[]{t.intValue(), t1.intValue()});
+
             // Avoid fetching requests twice when going from project to project/package (and viceversa);
             // tabs are added/removed, so tab index changes which triggers this listener
-            if ((lastPackage.isBlank() && !currentPackage.isBlank() && t1.intValue() == 3)
-                    || (!lastPackage.isBlank() && currentPackage.isBlank() && t1.intValue() == 1)) {
+            if (tabsChanged) {
+                tabsChanged = false;
                 return;
             }
             
