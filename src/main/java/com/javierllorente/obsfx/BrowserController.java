@@ -276,6 +276,7 @@ public class BrowserController implements Initializable {
     private void handleProjectTasks() {
         int tabIndex = tabPane.getSelectionModel().getSelectedIndex();
         logger.log(Level.INFO, "tabIndex = {0}", tabIndex);
+        overviewController.clearPkgData();
         switch (tabIndex) {
             case 0 -> {
                 startPrjMetaConfigTask(getLocationProject());
