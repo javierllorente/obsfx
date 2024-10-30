@@ -300,14 +300,15 @@ public class BrowserController implements Initializable {
                     logger.log(Level.INFO, "selectedPackage = {0}", selectedPackage);
                     logger.log(Level.INFO, "currentPackage = {0}", currentPackage);
                     bookmarksController.setPkg(selectedPackage);
-                    overviewController.toggleButtons(!selectedPackage.isEmpty());
+                    overviewController.toggleButtons(!selectedPackage.isEmpty());                    
 
+                    overviewController.setDataLoaded(false);
+                    filesController.clear();
+                    revisionsController.clear();
+                    requestsController.setDataLoaded(false);
+                    
                     // project/package -> project
-                    if (selectedPackage.isEmpty() && getLocationPackage().isBlank()) {
-                        overviewController.clearPkgData();
-                        filesController.clear();
-                        revisionsController.clear();
-                        
+                    if (selectedPackage.isEmpty() && getLocationPackage().isBlank()) {                        
                         // Package list arrives after requests,
                         // so do not clear requests. See load()
                         if (loaded) {
@@ -327,14 +328,14 @@ public class BrowserController implements Initializable {
                             tabPane.getTabs().indexOf(revisionsTab) == -1) {
                         tabPane.getTabs().add(1, filesTab);
                         tabPane.getTabs().add(2, revisionsTab);
-                        overviewController.setDataLoaded(false);
-                        requestsController.setDataLoaded(false);
                     }
                     
                     // Achtung! selectedPackage is empty when projectA/package -> projectB/package
                     if (selectedPackage.isEmpty() && !getLocationPackage().isBlank()) {
                         return;
                     }
+                    
+                    requestsController.clear();
                     
                     locationTextField.setText(prj + "/" + selectedPackage);
                     int tabIndex = tabPane.getSelectionModel().getSelectedIndex();
