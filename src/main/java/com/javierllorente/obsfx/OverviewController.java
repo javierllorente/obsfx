@@ -121,6 +121,9 @@ public class OverviewController extends DataController implements Initializable 
         packages.visibleProperty().bind(projectProperty.isNotNull()
                 .and(packageProperty.isNull()));
         packages.textProperty().bind(packageCountProperty);
+        
+        historyIcon.visibleProperty().bind(packageProperty.isNotNull());
+        latestRevision.visibleProperty().bind(packageProperty.isNotNull());
     }
     
     public void setBrowserController(BrowserController browserController) {
@@ -168,12 +171,10 @@ public class OverviewController extends DataController implements Initializable 
     
     public void setLatestRevision(OBSRevision revision) {
         latestRevision.setText(dateFormat.format(revision.getTime()));
-        historyIcon.setVisible(true);
     }
     
     public void clearLatestRevision() {
         latestRevision.setText(null);
-        historyIcon.setVisible(false);
     }
     
     public boolean isBuildResultSelected() {
