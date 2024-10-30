@@ -78,7 +78,7 @@ public class FilesController extends DataController implements Initializable {
     public void set(List<OBSFile> files) {
         filesTable.getItems().setAll(files);
         filesTable.sort();
-        dataLoaded = false;
+        dataLoaded = true;
     }
 
     public String getPkg() {
