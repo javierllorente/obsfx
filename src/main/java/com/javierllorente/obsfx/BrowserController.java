@@ -313,9 +313,6 @@ public class BrowserController implements Initializable {
                         // so do not clear requests. See load()
                         if (loaded) {
                             loaded = false;
-                            // Set to null, so that projectA/package to projectA
-                            // then tab switch to requests, fetches them
-                            requestsController.setPrj(null);
                         } else {
                             requestsController.clear();
                         }
