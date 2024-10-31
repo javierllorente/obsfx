@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2024 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,6 @@ public class BookmarksController implements Initializable {
         initialSize = bookmarksButton.getItems().size() - 1;
         
         addBookmarkItem.setOnAction((t) -> {
-           logger.info("clicked!");
            String item = browserController.locationTextField.getText();
            MenuItem entry = new MenuItem(item);
            entry.setOnAction((ActionEvent e) -> {
@@ -137,12 +136,10 @@ public class BookmarksController implements Initializable {
     }
     
     private void toggle(String location) {
-        logger.log(Level.INFO, "location = {0}", location);
         boolean found = false;
 
         for (int i = initialSize; i < bookmarksButton.getItems().size(); i++) {
             String item = bookmarksButton.getItems().get(i).getText();
-            logger.log(Level.INFO, "str: {0} - {1}", new Object[]{item, location});
             
             if (item.equals(location)) {
                 found = true;
