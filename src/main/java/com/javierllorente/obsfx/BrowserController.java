@@ -292,7 +292,6 @@ public class BrowserController implements Initializable {
         packagesListView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends String> ov,
                         String oldValue, String newValue) -> {
-                    String prj = currentProject;                    
                     String selectedPackage = (newValue == null) ? "" : newValue;                    
                     currentPackage = selectedPackage;
                     
@@ -333,25 +332,25 @@ public class BrowserController implements Initializable {
                     
                     requestsController.clear();
                     
-                    locationTextField.setText(prj + "/" + selectedPackage);
+                    locationTextField.setText(currentProject + "/" + selectedPackage);
                     int tabIndex = tabPane.getSelectionModel().getSelectedIndex();
                     logger.log(Level.INFO, "Tab index = {0}", tabIndex);
                     
                     switch (tabIndex) {
                         case 0:
-                            startPkgMetaConfigTask(prj, selectedPackage);
-                            startLatestRevisionTask(prj, selectedPackage);
-                            startBuildResultsTask(prj, selectedPackage);
+                            startPkgMetaConfigTask(currentProject, selectedPackage);
+                            startLatestRevisionTask(currentProject, selectedPackage);
+                            startBuildResultsTask(currentProject, selectedPackage);
                             tabsChanged = false;
                             break;
                         case 1:
-                            startFilesTask(prj, selectedPackage);
+                            startFilesTask(currentProject, selectedPackage);
                             break;
                         case 2:
-                            startRevisionsTask(prj, selectedPackage);
+                            startRevisionsTask(currentProject, selectedPackage);
                             break;
                         case 3:                            
-                            startRequestsTask(prj, selectedPackage);
+                            startRequestsTask(currentProject, selectedPackage);
                             tabsChanged = false;
                             break;
                     }
