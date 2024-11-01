@@ -292,14 +292,12 @@ public class BrowserController implements Initializable {
         packagesListView.getSelectionModel().selectedItemProperty()
                 .addListener((ObservableValue<? extends String> ov,
                         String oldValue, String newValue) -> {
-                    logger.log(Level.INFO, "1. locationPackage = {0}", getLocationPackage());                    
-                    String prj = currentProject;
-                    
+                    String prj = currentProject;                    
                     String selectedPackage = (newValue == null) ? "" : newValue;                    
                     currentPackage = selectedPackage;
                     
-                    logger.log(Level.INFO, "selectedPackage = {0}", selectedPackage);
-                    logger.log(Level.INFO, "currentPackage = {0}", currentPackage);
+                    logger.log(Level.INFO, "locationPackage = {0}, selectedPackage = {1}", 
+                            new Object[]{getLocationPackage(), selectedPackage});
                     bookmarksController.setPkg(selectedPackage);
                     overviewController.toggleButtons(!selectedPackage.isEmpty());                    
 
