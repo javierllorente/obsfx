@@ -392,7 +392,11 @@ public class BrowserController implements Initializable {
         
         // Tabs have been added/removed
         tabPane.getTabs().addListener((ListChangeListener.Change<? extends Tab> change) -> {
-            tabsChanged = true;
+            // Listener is called twice (once per tab)
+            // Set tabsChanged to true only once
+            if (change.getList().size() == 3) {
+                tabsChanged = true;
+            }
         });
 
         tabPane.getSelectionModel().selectedIndexProperty().addListener((var ov, var t, var t1) -> {            
