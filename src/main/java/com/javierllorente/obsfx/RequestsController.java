@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 
@@ -41,6 +42,9 @@ public class RequestsController extends DataController implements Initializable 
     
     @FXML
     TableView<OBSRequest> requestsTable;
+    
+    @FXML
+    TextArea descriptionTextArea;
     
     /**
      * Initializes the controller class.
@@ -100,7 +104,13 @@ public class RequestsController extends DataController implements Initializable 
                 }
             };
             return tableCell;
-        });        
+        });
+        
+        requestsTable.getSelectionModel().selectedItemProperty().addListener((ov, t, t1) -> {
+            if (t1 != null) {
+                descriptionTextArea.setText(t1.getDescription());
+            }
+        });
     }
     
     public void set(List<OBSRequest> requests) {
@@ -128,6 +138,7 @@ public class RequestsController extends DataController implements Initializable 
     public void clear() {
         prj = null;
         requestsTable.getItems().clear();
+        descriptionTextArea.clear();
         dataLoaded = false;
     }
     
