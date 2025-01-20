@@ -21,7 +21,8 @@
                       <TableColumn prefWidth="150.0" text="%requests.source" />
                       <TableColumn prefWidth="200.0" text="%requests.target" />
                       <TableColumn prefWidth="125.0" text="%requests.requester" />
-                      <TableColumn prefWidth="100.0" text="%requests.action" />
+                      <TableColumn prefWidth="75.0" text="%requests.action" />
+                      <TableColumn prefWidth="75.0" text="%requests.state" />
                   </columns>
               </TableView>
          </children>

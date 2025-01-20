@@ -28,7 +28,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.text.Text;
 
 /**
  * FXML Controller class
@@ -63,6 +62,7 @@ public class RequestsController extends DataController implements Initializable 
         requestsTable.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("target"));
         requestsTable.getColumns().get(4).setCellValueFactory(new PropertyValueFactory<>("creator"));
         requestsTable.getColumns().get(5).setCellValueFactory(new PropertyValueFactory<>("actionType"));
+        requestsTable.getColumns().get(6).setCellValueFactory(new PropertyValueFactory<>("state"));
 
         TableColumn<OBSRequest, Date> createdColumn
                 = (TableColumn<OBSRequest, Date>) requestsTable.getColumns().get(0);
