@@ -85,27 +85,6 @@ public class RequestsController extends DataController implements Initializable 
             return tableCell;
         });
         
-        TableColumn<OBSRequest, String> commentsColumn 
-                = (TableColumn<OBSRequest, String>) requestsTable.getColumns().get(3);
-        commentsColumn.setCellFactory((TableColumn<OBSRequest, String> p) -> {
-            TableCell<OBSRequest, String> tableCell = new TableCell<>() {
-        
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty) {
-                        setGraphic(null);
-                    } else {
-                        Text text = new Text(item);
-                        setGraphic(text);
-                        text.wrappingWidthProperty().bind(getTableColumn().widthProperty().subtract(5));
-                        text.fillProperty().bind(textFillProperty());
-                    }
-                }
-            };
-            return tableCell;
-        });
-        
         requestsTable.getSelectionModel().selectedItemProperty().addListener((ov, t, t1) -> {
             if (t1 != null) {
                 descriptionTextArea.setText(t1.getDescription());
