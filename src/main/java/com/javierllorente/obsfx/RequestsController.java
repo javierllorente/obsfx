@@ -58,11 +58,11 @@ public class RequestsController extends DataController implements Initializable 
     
     private void initTableColumns() {
         requestsTable.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("created"));
-        requestsTable.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("source"));
-        requestsTable.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("target"));
-        requestsTable.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("creator"));
-        requestsTable.getColumns().get(4).setCellValueFactory(new PropertyValueFactory<>("actionType"));
-        requestsTable.getColumns().get(5).setCellValueFactory(new PropertyValueFactory<>("id"));
+        requestsTable.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("id"));
+        requestsTable.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("source"));
+        requestsTable.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("target"));
+        requestsTable.getColumns().get(4).setCellValueFactory(new PropertyValueFactory<>("creator"));
+        requestsTable.getColumns().get(5).setCellValueFactory(new PropertyValueFactory<>("actionType"));
 
         TableColumn<OBSRequest, Date> createdColumn
                 = (TableColumn<OBSRequest, Date>) requestsTable.getColumns().get(0);
@@ -89,7 +89,7 @@ public class RequestsController extends DataController implements Initializable 
                 = (TableColumn<OBSRequest, String>) requestsTable.getColumns().get(3);
         commentsColumn.setCellFactory((TableColumn<OBSRequest, String> p) -> {
             TableCell<OBSRequest, String> tableCell = new TableCell<>() {
-                
+        
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
