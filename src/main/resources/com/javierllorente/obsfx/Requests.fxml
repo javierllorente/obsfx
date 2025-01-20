@@ -17,10 +17,10 @@
                   </placeholder>
                   <columns>
                       <TableColumn minWidth="130" prefWidth="50.0" sortType="DESCENDING" text="%requests.created" />
-                      <TableColumn prefWidth="100.0" text="%requests.id" />
-                      <TableColumn prefWidth="130.0" text="%requests.source" />
-                      <TableColumn prefWidth="130.0" text="%requests.target" />
-                      <TableColumn prefWidth="150.0" text="%requests.requester" />
+                      <TableColumn prefWidth="65.0" text="%requests.id" />
+                      <TableColumn prefWidth="150.0" text="%requests.source" />
+                      <TableColumn prefWidth="200.0" text="%requests.target" />
+                      <TableColumn prefWidth="125.0" text="%requests.requester" />
                       <TableColumn prefWidth="100.0" text="%requests.action" />
                   </columns>
               </TableView>
