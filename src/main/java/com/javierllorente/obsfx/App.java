@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ public class App extends Application {
     
     public static final String NAME = "OBS FX";
     public static final String VERSION = "0.1";
-    public static final int WINDOW_WIDTH = 1100;
-    public static final int WINDOW_HEIGHT = 750;
+    public static final int WINDOW_WIDTH = 1150;
+    public static final int WINDOW_HEIGHT = 800;
     public static final String ICON = "/obs.png";
     
     public static final String USERNAME = "username";
