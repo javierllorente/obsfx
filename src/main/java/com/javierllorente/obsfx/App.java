@@ -26,6 +26,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import javafx.scene.image.Image;
+import javafx.stage.Window;
 
 /**
  * JavaFX App
@@ -81,6 +82,10 @@ public class App extends Application {
     public static FXMLLoader getFXMLLoader(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"), bundle);
         return fxmlLoader;
+    }
+    
+    public static Window getWindow() {
+        return scene.getWindow();
     }
     
     public static AuthTokenEncryptor getAuthTokenEncryptor() {

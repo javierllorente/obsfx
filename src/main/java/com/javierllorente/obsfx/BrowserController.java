@@ -23,12 +23,15 @@ import com.javierllorente.jobs.entity.OBSPrjMetaConfig;
 import com.javierllorente.jobs.entity.OBSRequest;
 import com.javierllorente.jobs.entity.OBSResult;
 import com.javierllorente.jobs.entity.OBSRevision;
+import com.javierllorente.jobs.entity.OBSStatus;
 import com.javierllorente.obsfx.alert.ExceptionAlert;
 import com.javierllorente.obsfx.alert.ShortcutsAlert;
 import com.javierllorente.obsfx.dialog.LoginDialog;
 import com.javierllorente.obsfx.dialog.SettingsDialog;
 import com.javierllorente.obsfx.task.BuildLogTask;
 import com.javierllorente.obsfx.task.BuildResultsTask;
+import com.javierllorente.obsfx.task.ChangeRequestTask;
+import com.javierllorente.obsfx.task.DiffTask;
 import com.javierllorente.obsfx.task.FilesTask;
 import com.javierllorente.obsfx.task.PackagesTask;
 import com.javierllorente.obsfx.task.PkgMetaConfigTask;
@@ -179,6 +182,7 @@ public class BrowserController implements Initializable {
 
         bookmarksController.setBrowserController(this);
         overviewController.setBrowserController(this);
+        requestsController.setBrowserController(this);
     }
 
     public HostServices getHostServices() {
@@ -700,6 +704,51 @@ public class BrowserController implements Initializable {
         searchTask.setOnFailed((t) -> {
             progressIndicator.setVisible(false);
             showExceptionAlert(searchTask.getException());
+        });
+    }
+    
+    public void startDiffTask(String id) {
+        DiffTask diffTask = new DiffTask(id);
+        progressIndicator.setVisible(true);
+        new Thread(diffTask).start();
+        
+        diffTask.setOnSucceeded((t) -> {
+            progressIndicator.setVisible(false);
+            if (diffTask.getValue() != null) {
+                requestsController.setDiff(diffTask.getValue());
+            }
+        });
+        
+        diffTask.setOnFailed((t) -> {
+            progressIndicator.setVisible(false);
+            showExceptionAlert(diffTask.getException());
+        });
+    }
+    
+    public void startChangeRequestTask(String id, String comments, boolean accepted) {
+        ChangeRequestTask changeRequestTask = new ChangeRequestTask(id, comments, accepted);
+        progressIndicator.setVisible(true);
+        new Thread(changeRequestTask).start();
+        
+        changeRequestTask.setOnSucceeded((t) -> {
+            progressIndicator.setVisible(false);
+
+            if (changeRequestTask.getValue() != null) {
+                OBSStatus status = changeRequestTask.getValue();
+                startRequestsTask(currentProject, currentPackage);
+                
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.initOwner(borderPane.getScene().getWindow());
+                alert.setTitle("Request change");
+                alert.setHeaderText(null);
+                alert.setContentText("Result: " + status.getCode());
+                alert.showAndWait();
+            }
+        });
+        
+        changeRequestTask.setOnFailed((t) -> {
+            progressIndicator.setVisible(false);
+            showExceptionAlert(changeRequestTask.getException());
         });
     }
 

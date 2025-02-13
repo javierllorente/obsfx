@@ -16,18 +16,30 @@
 package com.javierllorente.obsfx;
 
 import com.javierllorente.jobs.entity.OBSRequest;
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
 
 /**
  * FXML Controller class
@@ -38,12 +50,14 @@ public class RequestsController extends DataController implements Initializable 
 
     private String prj;
     private String pkg;
+    private BrowserController browserController;
+    private RequestViewerController requestViewerController;
     
     @FXML
-    TableView<OBSRequest> requestsTable;
+    private TableView<OBSRequest> requestsTable;
     
     @FXML
-    TextArea descriptionTextArea;
+    private TextArea descriptionTextArea;
     
     /**
      * Initializes the controller class.
@@ -52,10 +66,47 @@ public class RequestsController extends DataController implements Initializable 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        initTableColumns();
+        initTable();
     }
     
-    private void initTableColumns() {
+    public void setBrowserController(BrowserController browserController) {
+        this.browserController = browserController;
+    }
+    
+    private void viewItem() {
+        try {
+            OBSRequest request = requestsTable.getSelectionModel().getSelectedItem();
+            FXMLLoader fXMLLoader = App.getFXMLLoader("RequestViewer");
+            Parent root = fXMLLoader.load();
+            Scene scene = new Scene(root);
+            requestViewerController = fXMLLoader.getController();
+            requestViewerController.setBrowserController(browserController);
+            Stage stage = new Stage();
+            stage.initOwner(App.getWindow());
+            stage.getIcons().add(new Image(App.class.getResourceAsStream(App.ICON)));
+            stage.setTitle(App.getBundle().getString("requestviewer.request") + " " 
+                    + request.getId());
+            stage.setScene(scene);
+            stage.show();
+            requestViewerController.setRequest(request);
+            
+            if (request.getActionType().equals("submit")) {
+                // Get SR diff
+                browserController.startDiffTask(request.getId());
+
+                // FIXME: Get package build results
+            } else {
+                requestViewerController.setDiff(request.getActionType() + " " + request.getTarget());
+            }
+            
+            
+            
+        } catch (IOException ex) {
+            Logger.getLogger(RequestsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void initTable() {
         requestsTable.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("created"));
         requestsTable.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("id"));
         requestsTable.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("source"));
@@ -85,9 +136,30 @@ public class RequestsController extends DataController implements Initializable 
             return tableCell;
         });
         
+        requestsTable.setRowFactory((TableView<OBSRequest> p) -> {
+            TableRow<OBSRequest> row = new TableRow<>();
+            ContextMenu contextMenu = new ContextMenu();
+            MenuItem viewItem = new MenuItem("View details");
+            viewItem.setOnAction((t) -> {
+                viewItem();
+            });
+            contextMenu.getItems().addAll(viewItem);
+            row.contextMenuProperty().bind(Bindings
+                    .when(row.emptyProperty())
+                    .then((ContextMenu) null)
+                    .otherwise(contextMenu));
+            return row;
+        });
+        
         requestsTable.getSelectionModel().selectedItemProperty().addListener((ov, t, t1) -> {
             if (t1 != null) {
                 descriptionTextArea.setText(t1.getDescription());
+            }
+        });
+        
+        requestsTable.setOnMouseClicked((t) -> {
+            if (t.getClickCount() == 2) {
+                viewItem();
             }
         });
     }
@@ -123,6 +195,10 @@ public class RequestsController extends DataController implements Initializable 
     
     public boolean isEmpty() {
         return requestsTable.getItems().isEmpty();
+    }
+
+    void setDiff(String diff) {
+        requestViewerController.setDiff(diff);
     }
 
 }
