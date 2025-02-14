@@ -68,7 +68,7 @@
                   </VBox>
             </content>
           </Tab>
-          <Tab text="Build results">
+          <Tab text="%requestviewer.build_results">
             <content>
               <fx:include fx:id="buildResults" source="BuildResults.fxml" />
             </content>
