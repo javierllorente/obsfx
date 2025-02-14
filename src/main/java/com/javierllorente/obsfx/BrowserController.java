@@ -344,7 +344,7 @@ public class BrowserController implements Initializable {
                         case 0:
                             startPkgMetaConfigTask(currentProject, selectedPackage);
                             startLatestRevisionTask(currentProject, selectedPackage);
-                            startBuildResultsTask(currentProject, selectedPackage);
+                            startBuildResultsTask(currentProject, selectedPackage, overviewController);
                             tabsChanged = false;
                             break;
                         case 1:
@@ -428,7 +428,7 @@ public class BrowserController implements Initializable {
                         overviewController.clear();
                         startPkgMetaConfigTask(currentProject, currentPackage);
                         startLatestRevisionTask(currentProject, currentPackage);
-                        startBuildResultsTask(currentProject, currentPackage);
+                        startBuildResultsTask(currentProject, currentPackage, overviewController);
                     }
                     break;
                 case 1:
@@ -591,14 +591,14 @@ public class BrowserController implements Initializable {
 
     }
 
-    public void startBuildResultsTask(String prj, String pkg) {
+    public void startBuildResultsTask(String prj, String pkg, TableSetter table) {
         BuildResultsTask buildResultsTask = new BuildResultsTask(prj, pkg);
         progressIndicator.setVisible(true);
         new Thread(buildResultsTask).start();
         buildResultsTask.setOnSucceeded((e) -> {
             List<OBSResult> buildResults = buildResultsTask.getValue();
             if (buildResults != null) {
-                overviewController.setResults(buildResults);
+                table.setAll(buildResults);
             }
             progressIndicator.setVisible(false);
         });

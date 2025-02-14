@@ -45,7 +45,8 @@ import org.kordamp.ikonli.javafx.FontIcon;
  *
  * @author javier
  */
-public class OverviewController extends DataController implements Initializable {
+public class OverviewController extends DataController implements Initializable, 
+        TableSetter<OBSResult> {
 
     @FXML
     private Label title;
@@ -201,7 +202,7 @@ public class OverviewController extends DataController implements Initializable 
             return;
         }
         buildResultsController.clear();
-        browserController.startBuildResultsTask(projectProperty.get(), packageProperty.get());
+        browserController.startBuildResultsTask(projectProperty.get(), packageProperty.get(), this);
     }
     
     @FXML
@@ -211,8 +212,9 @@ public class OverviewController extends DataController implements Initializable 
                         + projectProperty.get() + "&package=" + packageProperty.get());
     }
 
-    public void setResults(List<OBSResult> results) {
-        buildResultsController.setAll(results);
+    @Override
+    public void setAll(List<OBSResult> items) {
+        buildResultsController.setAll(items);
     }
     
     public String getPrj() {

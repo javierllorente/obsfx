@@ -16,13 +16,16 @@
 package com.javierllorente.obsfx;
 
 import com.javierllorente.jobs.entity.OBSRequest;
+import com.javierllorente.jobs.entity.OBSResult;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -34,10 +37,13 @@ import javafx.stage.Stage;
  *
  * @author javier
  */
-public class RequestViewerController implements Initializable {
+public class RequestViewerController implements Initializable, TableSetter<OBSResult> {
 
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
     private BrowserController browserController;
+    
+    @FXML
+    private TabPane tabPane;
     
     @FXML
     Label idLabel;
@@ -62,6 +68,9 @@ public class RequestViewerController implements Initializable {
     
     @FXML
     Button closeButton;
+    
+    @FXML
+    BuildResultsController buildResultsController;
     
     /**
      * Initializes the controller class.
@@ -99,6 +108,11 @@ public class RequestViewerController implements Initializable {
             textFlow.getChildren().add(text);
         }       
     }
+
+    @Override
+    public void setAll(List<OBSResult> items) {
+        buildResultsController.setAll(items);
+    }    
     
     @FXML
     private void handleAccept() {
@@ -118,6 +132,10 @@ public class RequestViewerController implements Initializable {
     private void handleClose() {
         Stage stage = (Stage) closeButton.getScene().getWindow();
         stage.close();
+    }
+
+    public void removeBuildResultsTab() {
+        tabPane.getTabs().remove(1);
     }
     
 }

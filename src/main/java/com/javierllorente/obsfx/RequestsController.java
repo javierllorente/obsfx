@@ -51,7 +51,7 @@ public class RequestsController extends DataController implements Initializable 
     private String prj;
     private String pkg;
     private BrowserController browserController;
-    private RequestViewerController requestViewerController;
+    private RequestViewerController requestViewerController;    
     
     @FXML
     private TableView<OBSRequest> requestsTable;
@@ -91,12 +91,12 @@ public class RequestsController extends DataController implements Initializable 
             requestViewerController.setRequest(request);
             
             if (request.getActionType().equals("submit")) {
-                // Get SR diff
                 browserController.startDiffTask(request.getId());
-
-                // FIXME: Get package build results
+                browserController.startBuildResultsTask(request.getSourceProject(), 
+                        request.getSourcePackage(), requestViewerController);
             } else {
                 requestViewerController.setDiff(request.getActionType() + " " + request.getTarget());
+                requestViewerController.removeBuildResultsTab();
             }
             
             
