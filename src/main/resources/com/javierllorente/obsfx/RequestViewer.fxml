@@ -75,7 +75,7 @@
           </Tab>
         </tabs>
       </TabPane>
-      <Label text="Comments">
+      <Label text="%requestviewer.comments">
          <VBox.margin>
             <Insets bottom="5.0" left="5.0" top="5.0" />
          </VBox.margin>
