@@ -26,14 +26,14 @@ import javafx.concurrent.Task;
  *
  * @author javier
  */
-public class RequestsTask extends Task<List<OBSRequest>> {
+public class PackageRequestsTask extends Task<List<OBSRequest>> {
     
-    private static final Logger logger = Logger.getLogger(RequestsTask.class.getName());
+    private static final Logger logger = Logger.getLogger(PackageRequestsTask.class.getName());
 
     private final String prj;
     private final String pkg;
 
-    public RequestsTask(String prj, String pkg) {
+    public PackageRequestsTask(String prj, String pkg) {
         this.prj = prj;
         this.pkg = pkg;
     }

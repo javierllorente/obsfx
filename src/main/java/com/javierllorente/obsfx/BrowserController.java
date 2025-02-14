@@ -38,7 +38,7 @@ import com.javierllorente.obsfx.task.PkgMetaConfigTask;
 import com.javierllorente.obsfx.task.PrjMetaConfigTask;
 import com.javierllorente.obsfx.task.ProjectRequestsTask;
 import com.javierllorente.obsfx.task.ProjectsTask;
-import com.javierllorente.obsfx.task.RequestsTask;
+import com.javierllorente.obsfx.task.PackageRequestsTask;
 import com.javierllorente.obsfx.task.RevisionsTask;
 import com.javierllorente.obsfx.task.SearchTask;
 import java.io.IOException;
@@ -354,7 +354,7 @@ public class BrowserController implements Initializable {
                             startRevisionsTask(currentProject, selectedPackage);
                             break;
                         case 3:                            
-                            startRequestsTask(currentProject, selectedPackage);
+                            startPackageRequestsTask(currentProject, selectedPackage);
                             tabsChanged = false;
                             break;
                     }
@@ -454,7 +454,7 @@ public class BrowserController implements Initializable {
                     logger.info("Requests tab visible");
                     if (!currentPackage.isBlank() && !requestsController.isDataLoaded()) {
                         requestsController.clear();
-                        startRequestsTask(currentProject, currentPackage);
+                        startPackageRequestsTask(currentProject, currentPackage);
                     }
                     break;
             }
@@ -657,20 +657,20 @@ public class BrowserController implements Initializable {
         });
     }
     
-    public void startRequestsTask(String prj, String pkg) {
-        RequestsTask requestsTask = new RequestsTask(prj, pkg);
+    public void startPackageRequestsTask(String prj, String pkg) {
+        PackageRequestsTask packageRequestsTask = new PackageRequestsTask(prj, pkg);
         progressIndicator.setVisible(true);
-        new Thread(requestsTask).start();
-        requestsTask.setOnSucceeded((e) -> {
-            List<OBSRequest> requests = requestsTask.getValue();
+        new Thread(packageRequestsTask).start();
+        packageRequestsTask.setOnSucceeded((e) -> {
+            List<OBSRequest> requests = packageRequestsTask.getValue();
             requestsController.set(requests);
             requestsController.setPrj(prj);            
             requestsController.setPkg(pkg);
             progressIndicator.setVisible(false);
         });
-        requestsTask.setOnFailed((t) -> {
+        packageRequestsTask.setOnFailed((t) -> {
             progressIndicator.setVisible(false);
-            showExceptionAlert(requestsTask.getException());
+            showExceptionAlert(packageRequestsTask.getException());
         });
     }
 
@@ -735,7 +735,7 @@ public class BrowserController implements Initializable {
 
             if (changeRequestTask.getValue() != null) {
                 OBSStatus status = changeRequestTask.getValue();
-                startRequestsTask(currentProject, currentPackage);
+                startPackageRequestsTask(currentProject, currentPackage);
                 
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.initOwner(borderPane.getScene().getWindow());
