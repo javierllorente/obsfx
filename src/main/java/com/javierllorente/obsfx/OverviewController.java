@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -37,12 +36,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -84,7 +78,7 @@ public class OverviewController extends DataController implements Initializable 
     private Label latestRevision;
     
     @FXML
-    private TableView<OBSResult> buildResultsTable;
+    private BuildResultsController buildResultsController;    
 
     private StringProperty projectProperty;
     private StringProperty packageProperty;
@@ -104,17 +98,16 @@ public class OverviewController extends DataController implements Initializable 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        initBuildResultsColumns();
         projectProperty = new SimpleStringProperty();
         packageProperty = new SimpleStringProperty();
         packageCountProperty = new SimpleStringProperty();
         
         viewLogButton.disableProperty().bind(packageProperty.isNull()
-                .or(buildResultsTable.getSelectionModel().selectedItemProperty().isNull()));        
+                .or(buildResultsController.selectedItemProperty().isNull()));        
         refreshButton.disableProperty().bind((packageProperty.isNull()));
         downloadButton.disableProperty().bind(packageProperty.isNull());
         link.managedProperty().bind(link.textProperty().isNotEmpty());
-        buildResultsTable.visibleProperty().bind(packageProperty.isNotNull());
+        buildResultsController.visibleProperty().bind(packageProperty.isNotNull());
         
         packagesLabel.visibleProperty().bind(projectProperty.isNotNull()
                 .and(packageProperty.isNull()));
@@ -177,8 +170,8 @@ public class OverviewController extends DataController implements Initializable 
         latestRevision.setText(null);
     }
     
-    public boolean isBuildResultSelected() {
-        return (buildResultsTable.getSelectionModel().getSelectedIndex() != -1);
+    public boolean hasBuildResultSelection() {
+        return buildResultsController.hasSelection();
     }
     
     @FXML
@@ -193,7 +186,7 @@ public class OverviewController extends DataController implements Initializable 
                     .getString("logviewer.title"), packageProperty.get()));
             stage.setScene(scene);
             stage.show();
-            OBSResult result = buildResultsTable.getSelectionModel().getSelectedItem();
+            OBSResult result = buildResultsController.getSelectedItem();
             browserController.startBuildLogTask(result.getProject(), result.getRepository(),
                     result.getArch(), packageProperty.get());
         } catch (IOException | RuntimeException ex) {
@@ -207,7 +200,7 @@ public class OverviewController extends DataController implements Initializable 
         if (projectProperty.get() == null || packageProperty.get() == null) {
             return;
         }
-        buildResultsTable.getItems().clear();
+        buildResultsController.clear();
         browserController.startBuildResultsTask(projectProperty.get(), packageProperty.get());
     }
     
@@ -217,55 +210,9 @@ public class OverviewController extends DataController implements Initializable 
                 .showDocument("https://software.opensuse.org/download.html?project=" 
                         + projectProperty.get() + "&package=" + packageProperty.get());
     }
-    
-    private void initBuildResultsColumns() {
-        buildResultsTable.getColumns().get(0).setCellValueFactory(
-                new PropertyValueFactory<>("repository")
-        );
-        buildResultsTable.getColumns().get(1).setCellValueFactory(
-                new PropertyValueFactory<>("arch")
-        );
-        TableColumn<OBSResult, String> statusColumn
-                = (TableColumn<OBSResult, String>) buildResultsTable.getColumns().get(2);
-        statusColumn.setCellValueFactory(cellData
-                -> new ReadOnlyStringWrapper(cellData.getValue().getStatus().getCode()));
-
-        statusColumn.setCellFactory((TableColumn<OBSResult, String> p) -> {
-            TableCell<OBSResult, String> tableCell = new TableCell<>() {
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty) {
-                        setText(null);
-                    } else {
-                        Color color = Color.BLACK;                        
-                        switch (item) {
-                            case "succeeded":
-                                color = Color.GREEN;
-                                break;
-                            case "failed":
-                            case "unresolvable":
-                            case "broken":
-                                color = Color.RED;
-                                break;
-                            case "disabled":
-                                color = Color.GRAY;
-                                break;
-                        }                        
-                        setText(item);
-                        setTextFill(color);
-                    }
-                }
-                
-            };
-            
-            return tableCell;
-        });        
-    }
 
     public void setResults(List<OBSResult> results) {
-        buildResultsTable.getItems().setAll(results);
-        buildResultsTable.sort();
+        buildResultsController.setAll(results);
     }
     
     public String getPrj() {
@@ -284,7 +231,7 @@ public class OverviewController extends DataController implements Initializable 
         packageProperty.set(null);
         link.setText(null);
         clearLatestRevision();
-        buildResultsTable.getItems().clear();
+        buildResultsController.clear();
     }
     
     public void clear() {

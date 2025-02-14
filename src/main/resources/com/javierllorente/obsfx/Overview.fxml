@@ -67,15 +67,6 @@
               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
           </padding>
       </HBox>
-      <TableView fx:id="buildResultsTable" prefHeight="450.0" prefWidth="145.0">
-          <placeholder>
-              <Label text="" />
-          </placeholder>
-          <columns>
-              <TableColumn prefWidth="350.0" text="%overview.repository" />
-              <TableColumn prefWidth="75.0" text="%overview.architecture" />
-              <TableColumn prefWidth="100.0" text="%overview.status" />
-          </columns>
-      </TableView>
+      <fx:include fx:id="buildResults" source="BuildResults.fxml" />
    </children>
 </VBox>

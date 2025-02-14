@@ -496,7 +496,7 @@ public class BrowserController implements Initializable {
                         showNotAuthenticatedAlert();
                         return;
                     }
-                    if (overviewController.isBuildResultSelected()) {
+                    if (overviewController.hasBuildResultSelection()) {
                         overviewController.handleViewLog();
                     }
                 },
