@@ -808,6 +808,7 @@ public class BrowserController implements Initializable {
     private void handleLogin() {        
         if (App.getOBS().isAuthenticated()) {
             clear();
+            App.getOBS().logout();
         } else {
             progressIndicator.setVisible(true);
             try {
