@@ -674,8 +674,8 @@ public class BrowserController implements Initializable {
         });
     }
 
-    public void startProjectsTask() {
-        ProjectsTask projectsTask = new ProjectsTask();
+    public void startProjectsTask(boolean includeHomePrjs) {        
+        ProjectsTask projectsTask = new ProjectsTask(includeHomePrjs);
         progressIndicator.setVisible(true);        
         new Thread(projectsTask).start();
         projectsTask.setOnSucceeded((t) -> {
@@ -865,8 +865,9 @@ public class BrowserController implements Initializable {
                 if (App.getOBS().isAuthenticated()) {
                     String homepage = preferences.get(App.HOMEPAGE,
                             "home:" + App.getOBS().getUsername());
+                    boolean includeHomePrjs = preferences.getBoolean(App.HOME_PROJECTS, false);
                     goTo(homepage);
-                    startProjectsTask();
+                    startProjectsTask(includeHomePrjs);
                     loadBookmarks();
                 } else {
                     switch (App.getOBS().getResponseCode()) {
@@ -1005,9 +1006,16 @@ public class BrowserController implements Initializable {
         }
         Optional<Map<String, String>> result = settingsDialog.showAndWait();
         result.ifPresent(data -> {
+            boolean oldIncludeHomePrjs = preferences.getBoolean(App.HOME_PROJECTS, false);
             updatePreferences(data);
             if (callHandleLogin) {
                 handleLogin();
+            } else {
+                boolean newIncludeHomePrjs = preferences.getBoolean(App.HOME_PROJECTS, false);
+                if (oldIncludeHomePrjs != newIncludeHomePrjs 
+                        && App.getOBS().isAuthenticated()) {
+                    startProjectsTask(newIncludeHomePrjs);
+                }
             }
         });
     }
@@ -1025,6 +1033,7 @@ public class BrowserController implements Initializable {
         preferences.put(App.PASSWORD, data.get(App.PASSWORD));
         preferences.put(App.API_URI, data.get(App.API_URI));
         preferences.put(App.HOMEPAGE, data.get(App.HOMEPAGE));
+        preferences.put(App.HOME_PROJECTS, data.get(App.HOME_PROJECTS));
         preferences.put(App.AUTOLOGIN, data.get(App.AUTOLOGIN));
     }
     

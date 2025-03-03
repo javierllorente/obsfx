@@ -43,6 +43,7 @@ public class App extends Application {
     public static final String PASSWORD = "password";
     public static final String API_URI = "api_uri";
     public static final String HOMEPAGE = "homepage";
+    public static final String HOME_PROJECTS = "home_projects";
     public static final String AUTOLOGIN = "autologin"; 
     
     private final String applicationStyle = "style.css";

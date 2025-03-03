@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2020-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,6 +89,9 @@ public class SettingsDialog extends Dialog<Map<String, String>> {
         
         CheckBox autoLoginCheckBox = new CheckBox();
         autoLoginCheckBox.setSelected(preferences.getBoolean(App.AUTOLOGIN, false));
+        
+        CheckBox homeProjectsCheckBox = new CheckBox();
+        homeProjectsCheckBox.setSelected(preferences.getBoolean(App.HOME_PROJECTS, false));
 
         gridPane.add(new Label(App.getBundle().getString("settings.username")), 0, 0);
         gridPane.add(nameField, 1, 0);
@@ -98,8 +101,10 @@ public class SettingsDialog extends Dialog<Map<String, String>> {
         gridPane.add(apiUriField, 1, 2);
         gridPane.add(new Label(App.getBundle().getString("settings.homepage")), 0, 3);
         gridPane.add(homepageField, 1, 3);
-        gridPane.add(new Label(App.getBundle().getString("settings.autologin")), 0, 4);
-        gridPane.add(autoLoginCheckBox, 1, 4);
+        gridPane.add(new Label(App.getBundle().getString("settings.homeprojects")), 0, 4);
+        gridPane.add(homeProjectsCheckBox, 1, 4);
+        gridPane.add(new Label(App.getBundle().getString("settings.autologin")), 0, 5);
+        gridPane.add(autoLoginCheckBox, 1, 5);
         
         getDialogPane().setContent(gridPane);
         setResizable(true); // FIXME: Workaround for JavaFX 11
@@ -121,6 +126,7 @@ public class SettingsDialog extends Dialog<Map<String, String>> {
                 }
                 data.put(App.API_URI, apiUriField.getText());
                 data.put(App.HOMEPAGE, homepageField.getText());
+                data.put(App.HOME_PROJECTS, String.valueOf(homeProjectsCheckBox.isSelected()));
                 data.put(App.AUTOLOGIN, String.valueOf(autoLoginCheckBox.isSelected()));
                 return data;
             }

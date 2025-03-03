@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,12 +31,17 @@ import org.xml.sax.SAXException;
 public class ProjectsTask extends Task<List<String>> {
 
     private static final Logger logger = Logger.getLogger(ProjectsTask.class.getName());
+    private final boolean includeHomePrjs;
+
+    public ProjectsTask(boolean includeHomePrjs) {
+        this.includeHomePrjs = includeHomePrjs;
+    }    
 
     @Override
     protected List<String> call() 
             throws IOException, ParserConfigurationException, SAXException  {
         logger.log(Level.INFO, "Fetching projects");
-        return App.getOBS().getProjectList(false);
+        return App.getOBS().getProjectList(includeHomePrjs);
     }
 
     @Override
