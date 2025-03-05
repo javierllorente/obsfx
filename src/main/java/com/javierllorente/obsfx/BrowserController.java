@@ -216,6 +216,7 @@ public class BrowserController implements Initializable {
         autoComplete.setPrefWidth(searchTextField.getPrefWidth());
         autoComplete.setVisibleRowCount(7);
         autoComplete.setHideOnEscape(true);
+        autoComplete.setDelay(700);
         
         searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.isBlank()) {
