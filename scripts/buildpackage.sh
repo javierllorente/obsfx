@@ -6,7 +6,7 @@ name=obsfx
 base_dir=..
 license_type=Apache-2.0
 license_file=$base_dir/LICENSE
-menu_group="Development;Translation;"
+menu_group="Network;Monitor;"
 
 build_dir=$base_dir/target
 lib_dir=$build_dir/dist/lib
