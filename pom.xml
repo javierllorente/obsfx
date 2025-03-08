@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.javierllorente</groupId>
             <artifactId>jobs</artifactId>
-            <version>0.9</version>
+            <version>0.9.1</version>
         </dependency>
         <dependency>
             <groupId>org.controlsfx</groupId>
