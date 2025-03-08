@@ -77,19 +77,39 @@
               <menus>
                 <Menu mnemonicParsing="false" text="%menu.file">
                   <items>
-                      <MenuItem mnemonicParsing="false" onAction="#handleLogin" text="%menu.login" />
-                      <MenuItem accelerator="Shortcut+Q" mnemonicParsing="false" onAction="#handleExit" text="%menu.exit" />
+                      <MenuItem mnemonicParsing="false" onAction="#handleLogin" text="%menu.login">
+                           <graphic>
+                              <FontIcon iconLiteral="icm-user" />
+                           </graphic>
+                      </MenuItem>
+                      <MenuItem accelerator="Shortcut+Q" mnemonicParsing="false" onAction="#handleExit" text="%menu.exit">
+                           <graphic>
+                              <FontIcon iconLiteral="icm-exit" />
+                           </graphic>
+                      </MenuItem>
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="%menu.edit">
                   <items>
-                      <MenuItem mnemonicParsing="false" onAction="#handleSettings" text="%menu.settings" />
+                      <MenuItem mnemonicParsing="false" onAction="#handleSettings" text="%menu.settings">
+                           <graphic>
+                              <FontIcon iconLiteral="icm-wrench" />
+                           </graphic>
+                      </MenuItem>
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="%menu.help">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#handleShortcuts" text="%shortcuts" />
-                    <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="%menu.about" />
+                    <MenuItem mnemonicParsing="false" onAction="#handleShortcuts" text="%shortcuts">
+                           <graphic>
+                              <FontIcon iconLiteral="icm-keyboard" />
+                           </graphic>
+                    </MenuItem>
+                    <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="%menu.about">
+                           <graphic>
+                              <FontIcon iconLiteral="icm-info" />
+                           </graphic>
+                    </MenuItem>
                   </items>
                 </Menu>
               </menus>
