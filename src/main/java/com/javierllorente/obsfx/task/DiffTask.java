@@ -16,12 +16,9 @@
 package com.javierllorente.obsfx.task;
 
 import com.javierllorente.obsfx.App;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.concurrent.Task;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -38,8 +35,7 @@ public class DiffTask extends Task<String> {
     
     
     @Override
-    protected String call() 
-            throws IOException, ParserConfigurationException, SAXException  {
+    protected String call() {
         logger.log(Level.INFO, id);
         if (id != null) {
             return App.getOBS().getRequestDiff(id);

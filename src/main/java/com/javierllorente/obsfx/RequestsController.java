@@ -16,6 +16,7 @@
 package com.javierllorente.obsfx;
 
 import com.javierllorente.jobs.entity.OBSRequest;
+import com.javierllorente.obsfx.adapter.RequestAdapter;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -54,7 +55,7 @@ public class RequestsController extends DataController implements Initializable 
     private RequestViewerController requestViewerController;    
     
     @FXML
-    private TableView<OBSRequest> requestsTable;
+    private TableView<RequestAdapter> requestsTable;
     
     @FXML
     private TextArea descriptionTextArea;
@@ -75,7 +76,7 @@ public class RequestsController extends DataController implements Initializable 
     
     private void viewItem() {
         try {
-            OBSRequest request = requestsTable.getSelectionModel().getSelectedItem();
+            RequestAdapter request = requestsTable.getSelectionModel().getSelectedItem();
             FXMLLoader fXMLLoader = App.getFXMLLoader("RequestViewer");
             Parent root = fXMLLoader.load();
             Scene scene = new Scene(root);
@@ -115,12 +116,12 @@ public class RequestsController extends DataController implements Initializable 
         requestsTable.getColumns().get(5).setCellValueFactory(new PropertyValueFactory<>("actionType"));
         requestsTable.getColumns().get(6).setCellValueFactory(new PropertyValueFactory<>("state"));
 
-        TableColumn<OBSRequest, Date> createdColumn
-                = (TableColumn<OBSRequest, Date>) requestsTable.getColumns().get(0);
+        TableColumn<RequestAdapter, Date> createdColumn
+                = (TableColumn<RequestAdapter, Date>) requestsTable.getColumns().get(0);
         requestsTable.getSortOrder().add(createdColumn);
 
-        createdColumn.setCellFactory((TableColumn<OBSRequest, Date> p) -> {
-            TableCell<OBSRequest, Date> tableCell = new TableCell<>() {
+        createdColumn.setCellFactory((TableColumn<RequestAdapter, Date> p) -> {
+            TableCell<RequestAdapter, Date> tableCell = new TableCell<>() {
                 private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
                 
                 @Override
@@ -136,8 +137,8 @@ public class RequestsController extends DataController implements Initializable 
             return tableCell;
         });
         
-        requestsTable.setRowFactory((TableView<OBSRequest> p) -> {
-            TableRow<OBSRequest> row = new TableRow<>();
+        requestsTable.setRowFactory((TableView<RequestAdapter> p) -> {
+            TableRow<RequestAdapter> row = new TableRow<>();
             ContextMenu contextMenu = new ContextMenu();
             MenuItem viewItem = new MenuItem("View details");
             viewItem.setOnAction((t) -> {
@@ -165,7 +166,7 @@ public class RequestsController extends DataController implements Initializable 
     }
     
     public void set(List<OBSRequest> requests) {
-        requestsTable.getItems().setAll(requests);
+        requests.stream().map(RequestAdapter::new).forEach(requestsTable.getItems()::add);
         requestsTable.sort();
         dataLoaded = true;
     }

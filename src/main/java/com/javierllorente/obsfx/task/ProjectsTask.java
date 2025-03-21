@@ -15,14 +15,14 @@
  */
 package com.javierllorente.obsfx.task;
 
+import com.javierllorente.jobs.entity.OBSEntry;
 import com.javierllorente.obsfx.App;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.concurrent.Task;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -39,9 +39,23 @@ public class ProjectsTask extends Task<List<String>> {
 
     @Override
     protected List<String> call() 
-            throws IOException, ParserConfigurationException, SAXException  {
+            throws IOException {
         logger.log(Level.INFO, "Fetching projects");
-        return App.getOBS().getProjectList(includeHomePrjs);
+        List<String> projects = new ArrayList<>();
+        List<OBSEntry> entries = App.getOBS().getProjects().getEntries();
+        String userHome = "home:" + App.getOBS().getUsername();
+        entries.forEach((t) -> {
+            if (includeHomePrjs) {
+                projects.add(t.getName());
+            } else {
+                if (t.getName().startsWith(userHome)) {
+                    projects.add(t.getName());
+                } else if (!t.getName().startsWith("home")) {
+                    projects.add(t.getName());
+                }
+            }
+        });
+        return projects;
     }
 
     @Override

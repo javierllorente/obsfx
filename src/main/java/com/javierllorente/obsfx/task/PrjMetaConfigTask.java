@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2024-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package com.javierllorente.obsfx.task;
 
-import com.javierllorente.jobs.entity.OBSPrjMetaConfig;
+import com.javierllorente.jobs.entity.OBSProject;
 import com.javierllorente.obsfx.App;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +25,7 @@ import javafx.concurrent.Task;
  *
  * @author javier
  */
-public class PrjMetaConfigTask extends Task<OBSPrjMetaConfig> {
+public class PrjMetaConfigTask extends Task<OBSProject> {
     
     private static final Logger logger = Logger.getLogger(PrjMetaConfigTask.class.getName());
 
@@ -36,7 +36,7 @@ public class PrjMetaConfigTask extends Task<OBSPrjMetaConfig> {
     }
 
     @Override
-    protected OBSPrjMetaConfig call() throws Exception {
+    protected OBSProject call() throws Exception {
         if (prj != null) {
             logger.log(Level.INFO, "Fetching prj meta config of {0}",prj);
             return App.getOBS().getProjectMetaConfig(prj);

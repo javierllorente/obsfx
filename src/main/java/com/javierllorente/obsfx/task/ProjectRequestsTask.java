@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2024-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.javierllorente.obsfx.task;
 
 import com.javierllorente.jobs.entity.OBSRequest;
 import com.javierllorente.obsfx.App;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +41,8 @@ public class ProjectRequestsTask extends Task<List<OBSRequest>> {
     protected List<OBSRequest> call() throws Exception {
         if (project != null) {
             logger.log(Level.INFO, "Fetching requests of {0}", project);
-            return App.getOBS().getProjectRequests(project);
+            List<OBSRequest> requests = App.getOBS().getProjectRequests(project).getRequests();
+            return (requests == null) ? new ArrayList<>() : requests;
         }
         return null;
     }

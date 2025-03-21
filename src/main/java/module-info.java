@@ -5,6 +5,7 @@ module com.javierllorente.obsfx {
     requires java.logging;
     requires java.prefs;
     requires java.xml;
+    requires jakarta.ws.rs;
     requires com.javierllorente.jobs;
     requires org.kordamp.ikonli.javafx;
     requires org.controlsfx.controls;

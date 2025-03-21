@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,10 @@
  */
 package com.javierllorente.obsfx;
 
+import com.javierllorente.jobs.entity.OBSMetaConfig;
+import com.javierllorente.jobs.entity.OBSPackage;
 import com.javierllorente.jobs.entity.OBSPerson;
-import java.io.IOException;
+import com.javierllorente.jobs.entity.OBSProject;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -28,9 +30,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import org.xml.sax.SAXException;
 
 /**
  * FXML Controller class
@@ -77,15 +76,26 @@ public class BookmarksController implements Initializable {
                 browserController.goTo(item);
             });
            bookmarksButton.getItems().add(entry);
-           person.addWatchItem(browserController.locationTextField.getText());
+            OBSMetaConfig bookmark = stringToMetaConfig(item);
+            person.getWatchList().add(bookmark);
            updatePerson();
         });
         deleteBookmarkItem.setOnAction((t) -> {
-            for (MenuItem item : bookmarksButton.getItems()) {
-                if (item.getText() != null && item.getText()
+            for (MenuItem entry : bookmarksButton.getItems()) {
+                if (entry.getText() != null && entry.getText()
                         .equals(browserController.locationTextField.getText())) {
-                    bookmarksButton.getItems().remove(item);
-                    person.removeWatchItem(item.getText());
+                    bookmarksButton.getItems().remove(entry);
+
+                    OBSMetaConfig bookmark = stringToMetaConfig(entry.getText());
+
+                    for (OBSMetaConfig metaConfig : person.getWatchList()) {
+                        if (metaConfig instanceof OBSPackage) {
+                            logger.info(((OBSPackage) metaConfig).getName() + "/" + ((OBSPackage) metaConfig).getProject().getName());
+                        } else {
+                            logger.info(metaConfig.getName());
+                        }
+                    }
+                    person.getWatchList().remove(bookmark);
                     updatePerson();
                     break;
                 }
@@ -100,13 +110,26 @@ public class BookmarksController implements Initializable {
             toggle(prj + ((pkg != null && !pkg.isEmpty()) ? "/" + pkg : ""));
         });
     }
+    
+    private OBSMetaConfig stringToMetaConfig(String item) {
+        OBSMetaConfig metaConfig;
+        if (item.contains("/")) {
+            String[] location = item.split("/");
+            metaConfig = new OBSPackage();
+            OBSPackage packageItem = (OBSPackage) metaConfig;
+            packageItem.setName(location[1]);
+            OBSProject projectItem = new OBSProject();
+            projectItem.setName(location[0]);
+            packageItem.setProject(projectItem);
+        } else {
+            metaConfig = new OBSProject();
+            metaConfig.setName(item);
+        }
+        return metaConfig;
+    }
 
     private void updatePerson() {
-        try {
-            App.getOBS().updatePerson(person);
-        } catch (ParserConfigurationException | TransformerException | IOException | SAXException ex) {
-            Logger.getLogger(BookmarksController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        App.getOBS().updatePerson(person);
     }
 
     public void setBrowserController(BrowserController browserController) {
@@ -125,11 +148,11 @@ public class BookmarksController implements Initializable {
         this.person = person;
         bookmarksButton.getItems().remove(initialSize, bookmarksButton.getItems().size());
         
-        for (String item : person.getWatchList()) {
-            MenuItem entry = new MenuItem(item);
+        for (OBSMetaConfig item : person.getWatchList()) {
+            MenuItem entry = new MenuItem(item.toString());
             entry.setOnAction((ActionEvent t) -> {
                 logger.log(Level.INFO, "Bookmark clicked: {0}", item);
-                browserController.goTo(item);
+                browserController.goTo(item.toString());
             });
             bookmarksButton.getItems().add(entry);
         }

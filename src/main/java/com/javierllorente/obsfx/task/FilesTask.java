@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,9 @@
  */
 package com.javierllorente.obsfx.task;
 
-import com.javierllorente.jobs.entity.OBSFile;
+import com.javierllorente.jobs.entity.OBSEntry;
 import com.javierllorente.obsfx.App;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +27,7 @@ import javafx.concurrent.Task;
  *
  * @author javier
  */
-public class FilesTask extends Task<List<OBSFile>> {
+public class FilesTask extends Task<List<OBSEntry>> {
     
     private static final Logger logger = Logger.getLogger(FilesTask.class.getName());
 
@@ -39,10 +40,11 @@ public class FilesTask extends Task<List<OBSFile>> {
     }
 
     @Override
-    protected List<OBSFile> call() throws Exception {
+    protected List<OBSEntry> call() throws Exception {
         if (prj != null && pkg != null) {
             logger.log(Level.INFO, "Fetching files of {0}/{1}", new Object[]{prj, pkg});
-            return App.getOBS().getFileList(prj, pkg);
+            List<OBSEntry> entries = App.getOBS().getFiles(prj, pkg).getEntries();
+            return (entries == null) ? new ArrayList<>() : entries;
         }
         return null;
     }

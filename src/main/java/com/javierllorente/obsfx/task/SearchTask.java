@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2024-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,10 @@ package com.javierllorente.obsfx.task;
 
 import com.javierllorente.jobs.entity.OBSPackage;
 import com.javierllorente.obsfx.App;
-import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.concurrent.Task;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -40,11 +37,10 @@ public class SearchTask extends Task<List<OBSPackage>> {
     
     
     @Override
-    protected List<OBSPackage> call() 
-            throws IOException, ParserConfigurationException, SAXException  {
+    protected List<OBSPackage> call() {
         logger.log(Level.INFO, pkg);
         if (pkg != null) {
-            return App.getOBS().packageSearch(pkg);
+            return App.getOBS().packageSearch(pkg).getPackages();
         }
         return null;
     }

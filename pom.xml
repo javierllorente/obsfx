@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.javierllorente</groupId>
     <artifactId>obsfx</artifactId>
-    <version>0.9.1</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>OBS FX</name>
     <description>A JavaFX-based OBS client</description>
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.javierllorente</groupId>
             <artifactId>jobs</artifactId>
-            <version>0.9.1</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.controlsfx</groupId>
@@ -60,6 +60,12 @@
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-icomoon-pack</artifactId>
             <version>12.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>4.0.0</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
     <build>

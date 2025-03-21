@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,9 @@
  */
 package com.javierllorente.obsfx.task;
 
+import com.javierllorente.jobs.entity.OBSEntry;
 import com.javierllorente.obsfx.App;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +41,14 @@ public class PackagesTask extends Task<List<String>> {
     protected List<String> call() throws Exception {
         if (prj != null) {
             logger.log(Level.INFO, "Fetching packages of {0}", prj);
-            return App.getOBS().getPackageList(prj);
+            List<String> packages = new ArrayList<>();
+            List<OBSEntry> entries = App.getOBS().getPackages(prj).getEntries();
+            if (entries != null) {
+                entries.forEach((t) -> {
+                    packages.add(t.getName());
+                });
+            }
+            return packages;
         }
         return null;
     }

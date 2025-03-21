@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  */
 package com.javierllorente.obsfx;
 
-import com.javierllorente.jobs.entity.OBSFile;
+import com.javierllorente.jobs.entity.OBSEntry;
+import com.javierllorente.obsfx.adapter.FileAdapter;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,7 +39,7 @@ public class FilesController extends DataController implements Initializable {
     private String pkg;
 
     @FXML
-    private TableView<OBSFile> filesTable;
+    private TableView<FileAdapter> filesTable;
     
     /**
      * Initializes the controller class.
@@ -55,10 +56,10 @@ public class FilesController extends DataController implements Initializable {
         filesTable.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("size"));
         filesTable.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("lastModified"));
 
-        TableColumn<OBSFile, Date> lastModifiedColumn
-                = (TableColumn<OBSFile, Date>) filesTable.getColumns().get(2);
-        lastModifiedColumn.setCellFactory((TableColumn<OBSFile, Date> p) -> {
-            TableCell<OBSFile, Date> tableCell = new TableCell<>() {
+        TableColumn<FileAdapter, Date> lastModifiedColumn
+                = (TableColumn<FileAdapter, Date>) filesTable.getColumns().get(2);
+        lastModifiedColumn.setCellFactory((TableColumn<FileAdapter, Date> p) -> {
+            TableCell<FileAdapter, Date> tableCell = new TableCell<>() {
                 private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
                 
                 @Override
@@ -75,8 +76,8 @@ public class FilesController extends DataController implements Initializable {
         });
     }
     
-    public void set(List<OBSFile> files) {
-        filesTable.getItems().setAll(files);
+    public void set(List<OBSEntry> files) {
+        files.stream().map(FileAdapter::new).forEach(filesTable.getItems()::add);
         filesTable.sort();
         dataLoaded = true;
     }

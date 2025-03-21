@@ -15,11 +15,10 @@
  */
 package com.javierllorente.obsfx;
 
-import com.javierllorente.jobs.entity.OBSFile;
+import com.javierllorente.jobs.entity.OBSEntry;
 import com.javierllorente.jobs.entity.OBSPackage;
 import com.javierllorente.jobs.entity.OBSPerson;
-import com.javierllorente.jobs.entity.OBSPkgMetaConfig;
-import com.javierllorente.jobs.entity.OBSPrjMetaConfig;
+import com.javierllorente.jobs.entity.OBSProject;
 import com.javierllorente.jobs.entity.OBSRequest;
 import com.javierllorente.jobs.entity.OBSResult;
 import com.javierllorente.jobs.entity.OBSRevision;
@@ -41,9 +40,11 @@ import com.javierllorente.obsfx.task.ProjectsTask;
 import com.javierllorente.obsfx.task.PackageRequestsTask;
 import com.javierllorente.obsfx.task.RevisionsTask;
 import com.javierllorente.obsfx.task.SearchTask;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
+import jakarta.ws.rs.ClientErrorException;
+import jakarta.ws.rs.ServerErrorException;
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -86,9 +87,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.util.Pair;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
-import javax.xml.parsers.ParserConfigurationException;
 import org.controlsfx.control.textfield.TextFields;
-import org.xml.sax.SAXException;
 
 /**
  * FXML Controller class
@@ -531,8 +530,8 @@ public class BrowserController implements Initializable {
         new Thread(prjMetaConfigTask).start();
 
         prjMetaConfigTask.setOnSucceeded((e) -> {
-            OBSPrjMetaConfig prjMetaConfig = prjMetaConfigTask.getValue();
-            overviewController.setMetaConfig(prjMetaConfig);
+            OBSProject project = prjMetaConfigTask.getValue();
+            overviewController.setMetaConfig(project);
             progressIndicator.setVisible(false);
         });
         prjMetaConfigTask.setOnFailed((t) -> {
@@ -548,8 +547,8 @@ public class BrowserController implements Initializable {
         new Thread(pkgMetaConfigTask).start();
 
         pkgMetaConfigTask.setOnSucceeded((e) -> {
-            OBSPkgMetaConfig pkgMetaConfig = pkgMetaConfigTask.getValue();
-            overviewController.setMetaConfig(pkgMetaConfig);
+            OBSPackage obsPackage = pkgMetaConfigTask.getValue();
+            overviewController.setMetaConfig(obsPackage);
             progressIndicator.setVisible(false);
         });
         pkgMetaConfigTask.setOnFailed((t) -> {
@@ -614,7 +613,7 @@ public class BrowserController implements Initializable {
         progressIndicator.setVisible(true);
         new Thread(filesTask).start();        
         filesTask.setOnSucceeded((e) -> {
-            List<OBSFile> files = filesTask.getValue();
+            List<OBSEntry> files = filesTask.getValue();
             filesController.set(files);
             filesController.setPkg(pkg);
             progressIndicator.setVisible(false);
@@ -680,7 +679,7 @@ public class BrowserController implements Initializable {
         progressIndicator.setVisible(true);        
         new Thread(projectsTask).start();
         projectsTask.setOnSucceeded((t) -> {
-            projects = projectsTask.getValue();   
+            projects = projectsTask.getValue();
             progressIndicator.setVisible(false);
         });
         projectsTask.setOnFailed((t) -> {
@@ -754,12 +753,8 @@ public class BrowserController implements Initializable {
     }
 
     public void loadBookmarks() {
-        try {
-            OBSPerson person = App.getOBS().getPerson();
-            bookmarksController.addBookmarks(person);
-        } catch (IOException | ParserConfigurationException | SAXException ex) {
-            Logger.getLogger(BrowserController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        OBSPerson person = App.getOBS().getPerson();
+        bookmarksController.addBookmarks(person);
     }
 
     @FXML
@@ -838,18 +833,18 @@ public class BrowserController implements Initializable {
                     if (apiUri.endsWith("/")) {
                         apiUri = apiUri.substring(0, apiUri.length() - 1);
                     }                    
-                    App.getOBS().setApiUrl(new URL(apiUri));
+                    App.getOBS().setApiUri(new URI(apiUri));
                     authenticate(usernameText, passwordText);
                 }
-            } catch (MalformedURLException | IllegalBlockSizeException | BadPaddingException 
-                    | IllegalArgumentException ex) {
+            } catch (IllegalBlockSizeException | BadPaddingException 
+                    | URISyntaxException ex) {
                 showExceptionAlert(ex);
                 Logger.getLogger(BrowserController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
 
-    private void authenticate(String username, String password) {        
+    private void authenticate(String username, String password) {      
         Task<Void> authTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -870,9 +865,21 @@ public class BrowserController implements Initializable {
                     goTo(homepage);
                     startProjectsTask(includeHomePrjs);
                     loadBookmarks();
-                } else {
-                    switch (App.getOBS().getResponseCode()) {
-                        case HttpURLConnection.HTTP_UNAUTHORIZED:
+                }
+                progressIndicator.setVisible(false);
+            }
+
+            @Override
+            protected void failed() {
+                super.failed();
+                progressIndicator.setVisible(false);
+                logger.info("auth failed!");
+                
+                Throwable exception = getException();                
+                if (exception instanceof ClientErrorException || exception instanceof ServerErrorException) {
+
+                    switch (((ClientErrorException) exception).getResponse().getStatusInfo().toEnum()) {
+                        case UNAUTHORIZED:
                             Platform.runLater(() -> {
                                 LoginDialog dialog = new LoginDialog(borderPane
                                         .getScene().getWindow(), preferences);
@@ -891,29 +898,29 @@ public class BrowserController implements Initializable {
                             });
                             logger.info("Not authorized");
                             break;
-                    case HttpURLConnection.HTTP_NOT_FOUND:
-                        Platform.runLater(() -> {
-                            Alert alert = new Alert(AlertType.ERROR);
-                            alert.initOwner(borderPane.getScene().getWindow());
-                            alert.setResizable(true);
-                            alert.setTitle(App.getBundle().getString("error.title"));
-                            alert.setHeaderText(App.getBundle().getString("error.api_uri.not_found.header"));
-                            alert.setContentText(preferences.get(App.API_URI, ""));
-                            alert.showAndWait();
-                            
-                            showSettingsDialog(true, true);
-                        });
-                        break;
-                    }
-                }
-                progressIndicator.setVisible(false);
-            }
+                        case NOT_FOUND:
+                            Platform.runLater(() -> {
+                                Alert alert = new Alert(AlertType.ERROR);
+                                alert.initOwner(borderPane.getScene().getWindow());
+                                alert.setResizable(true);
+                                alert.setTitle(App.getBundle().getString("error.title"));
+                                alert.setHeaderText(App.getBundle().getString("error.api_uri.not_found.header"));
+                                alert.setContentText(preferences.get(App.API_URI, ""));
+                                alert.showAndWait();
 
-            @Override
-            protected void failed() {
-                super.failed();
-                progressIndicator.setVisible(false);
-                showExceptionAlert(getException());
+                                showSettingsDialog(true, true);
+                            });
+                            break;
+                        default:
+                            Platform.runLater(() -> {
+                                showExceptionAlert(exception);
+                            });
+                    }
+                } else {
+                    Platform.runLater(() -> {
+                        showExceptionAlert(exception);
+                    });
+                }
             }
         };
 

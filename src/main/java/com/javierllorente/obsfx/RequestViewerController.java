@@ -15,8 +15,8 @@
  */
 package com.javierllorente.obsfx;
 
-import com.javierllorente.jobs.entity.OBSRequest;
 import com.javierllorente.jobs.entity.OBSResult;
+import com.javierllorente.obsfx.adapter.RequestAdapter;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -84,12 +84,12 @@ public class RequestViewerController implements Initializable, TableSetter<OBSRe
         this.browserController = browserController;
     }
     
-    public void setRequest(OBSRequest request) {
+    public void setRequest(RequestAdapter request) {
         idLabel.setText(request.getId());
         creatorLabel.setText(request.getCreator());
         sourceLabel.setText(request.getSource());
         targetLabel.setText(request.getTarget());
-        dateLabel.setText(dateFormat.format(request.getDate()));        
+        dateLabel.setText(dateFormat.format(request.getCreated()));        
     }
     
     public void setDiff(String diffStr) {

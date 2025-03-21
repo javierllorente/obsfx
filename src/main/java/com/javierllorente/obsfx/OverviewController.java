@@ -16,7 +16,7 @@
 package com.javierllorente.obsfx;
 
 import com.javierllorente.jobs.entity.OBSMetaConfig;
-import com.javierllorente.jobs.entity.OBSPkgMetaConfig;
+import com.javierllorente.jobs.entity.OBSPackage;
 import com.javierllorente.jobs.entity.OBSResult;
 import com.javierllorente.jobs.entity.OBSRevision;
 import java.io.IOException;
@@ -131,16 +131,16 @@ public class OverviewController extends DataController implements Initializable,
         }
         title.setText(configTitle);
         
-        if (metaConfig instanceof OBSPkgMetaConfig pkgMetaConfig) {            
-            if (pkgMetaConfig.getUrl() != null) {
-                link.setText(pkgMetaConfig.getUrl().toString());
+        if (metaConfig instanceof OBSPackage pkgMetaConfig) {            
+            if (pkgMetaConfig.getUri() != null) {
+                link.setText(pkgMetaConfig.getUri().toString());
                 link.setOnAction((t) -> {
                     browserController.getHostServices().showDocument(link.getText());
                 });
             } else {
                 link.setText("");
             }
-            projectProperty.set(pkgMetaConfig.getProject());
+            projectProperty.set(pkgMetaConfig.getProject().getName());
             packageProperty.set(metaConfig.getName());
         } else {
             projectProperty.set(metaConfig.getName());

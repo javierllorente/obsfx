@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2023-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@
 package com.javierllorente.obsfx.task;
 
 import com.javierllorente.jobs.entity.OBSResult;
+import com.javierllorente.jobs.entity.OBSResultList;
 import com.javierllorente.obsfx.App;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,7 +44,9 @@ public class BuildResultsTask extends Task<List<OBSResult>> {
     protected List<OBSResult> call() throws Exception {
         if (prj != null && pkg != null) {
             logger.log(Level.INFO, "Fetching build results of {0}:{1}", new Object[]{prj, pkg});
-            return App.getOBS().getAllBuildStatus(prj, pkg);
+            OBSResultList resultList = App.getOBS().getPackageResults(prj, pkg);
+            List<OBSResult> results = resultList.getResults();
+            return (results == null) ? new ArrayList<>() : results;
         }
         return null;
     }

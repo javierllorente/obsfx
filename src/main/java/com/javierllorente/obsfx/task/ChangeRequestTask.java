@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.concurrent.Task;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -44,7 +42,7 @@ public class ChangeRequestTask extends Task<OBSStatus> {
     
     @Override
     protected OBSStatus call() 
-            throws IOException, ParserConfigurationException, SAXException  {
+            throws IOException  {
         logger.log(Level.INFO, id);
         if (id != null) {
             return App.getOBS().changeRequestState(id, comments, accepted);

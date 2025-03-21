@@ -54,7 +54,9 @@ public class BuildResultsController implements Initializable {
         TableColumn<OBSResult, String> statusColumn
                 = (TableColumn<OBSResult, String>) table.getColumns().get(2);
         statusColumn.setCellValueFactory(cellData
-                -> new ReadOnlyStringWrapper(cellData.getValue().getStatus().getCode()));
+                -> new ReadOnlyStringWrapper((cellData.getValue().getStatus() == null) 
+                        ? ""
+                        : cellData.getValue().getStatus().getCode()));
 
         statusColumn.setCellFactory((TableColumn<OBSResult, String> p) -> {
             TableCell<OBSResult, String> tableCell = new TableCell<>() {
