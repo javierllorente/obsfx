@@ -34,7 +34,7 @@ import javafx.stage.Window;
 public class App extends Application {
     
     public static final String NAME = "OBS FX";
-    public static final String VERSION = "0.9.1";
+    public static final String VERSION = "1.0.0";
     public static final int WINDOW_WIDTH = 1150;
     public static final int WINDOW_HEIGHT = 800;
     public static final String ICON = "/obs.png";
