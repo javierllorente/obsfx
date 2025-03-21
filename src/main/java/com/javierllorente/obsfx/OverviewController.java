@@ -182,6 +182,7 @@ public class OverviewController extends DataController implements Initializable,
             Scene scene = new Scene(fXMLLoader.load(), 800, 600);
             logViewerController = fXMLLoader.getController();
             Stage stage = new Stage();
+            stage.initOwner(App.getWindow());
             stage.getIcons().add(new Image(App.class.getResourceAsStream(App.ICON)));
             stage.setTitle(App.NAME + " - " + MessageFormat.format(App.getBundle()
                     .getString("logviewer.title"), packageProperty.get()));
