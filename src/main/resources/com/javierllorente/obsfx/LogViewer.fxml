@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javierllorente.obsfx.LogViewerController">
    <children>
@@ -24,11 +25,19 @@
             <Button fx:id="previousButton" mnemonicParsing="true" onAction="#findPrevious" text="%logviewer.previous">
                <HBox.margin>
                   <Insets left="5.0" />
-               </HBox.margin></Button>
-            <Button fx:id="nextButton" mnemonicParsing="true" onAction="#findNext" text="%logviewer.next">
+               </HBox.margin>
+               <graphic>
+                  <FontIcon iconLiteral="icm-arrow-left2" />
+               </graphic>
+            </Button>
+            <Button fx:id="nextButton" mnemonicParsing="true" onAction="#findNext" text="%logviewer.next" contentDisplay="RIGHT">
                <HBox.margin>
                   <Insets left="3.0" />
-               </HBox.margin></Button>
+               </HBox.margin>
+               <graphic>
+                  <FontIcon iconLiteral="icm-arrow-right2" />
+               </graphic>
+            </Button>
          </children>
          <VBox.margin>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
