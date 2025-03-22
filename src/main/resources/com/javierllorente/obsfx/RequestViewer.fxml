@@ -87,7 +87,7 @@
                <graphic>
                   <FontIcon iconColor="GREEN" iconLiteral="icm-checkmark" />
                </graphic></Button>
-            <Button cancelButton="true" mnemonicParsing="false" onAction="#handleCancel" text="%requestviewer.cancel">
+            <Button cancelButton="true" mnemonicParsing="false" onAction="#handleDecline" text="%requestviewer.decline">
                <graphic>
                   <FontIcon iconColor="RED" iconLiteral="icm-cross" />
                </graphic></Button>

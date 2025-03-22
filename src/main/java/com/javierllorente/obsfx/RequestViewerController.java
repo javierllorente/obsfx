@@ -122,7 +122,7 @@ public class RequestViewerController implements Initializable, TableSetter<OBSRe
     }
     
     @FXML
-    private void handleCancel() {
+    private void handleDecline() {
         browserController.startChangeRequestTask(idLabel.getText(),
                 commentsTextArea.getText(), false);
         handleClose();
