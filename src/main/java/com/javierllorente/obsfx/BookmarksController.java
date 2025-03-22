@@ -30,6 +30,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 /**
  * FXML Controller class
@@ -68,18 +69,25 @@ public class BookmarksController implements Initializable {
         // does not count empty item (to be deleted on addBookmarks())
         initialSize = bookmarksButton.getItems().size() - 1;
         
+        FontIcon addIcon = new FontIcon("icm-plus");
+        addBookmarkItem.setGraphic(addIcon);
         addBookmarkItem.setOnAction((t) -> {
-           String item = browserController.locationTextField.getText();
-           MenuItem entry = new MenuItem(item);
-           entry.setOnAction((ActionEvent e) -> {
+            String item = browserController.locationTextField.getText();
+            MenuItem entry = new MenuItem(item);
+            FontIcon bookmarkIcon = new FontIcon("icm-bookmark");
+            entry.setGraphic(bookmarkIcon);
+            entry.setOnAction((ActionEvent e) -> {
                 logger.log(Level.INFO, "Bookmark clicked: {0}", item);
                 browserController.goTo(item);
             });
-           bookmarksButton.getItems().add(entry);
+            bookmarksButton.getItems().add(entry);
             OBSMetaConfig bookmark = stringToMetaConfig(item);
             person.getWatchList().add(bookmark);
-           updatePerson();
+            updatePerson();
         });
+
+        FontIcon binIcon = new FontIcon("icm-bin");
+        deleteBookmarkItem.setGraphic(binIcon);
         deleteBookmarkItem.setOnAction((t) -> {
             for (MenuItem entry : bookmarksButton.getItems()) {
                 if (entry.getText() != null && entry.getText()
@@ -100,7 +108,7 @@ public class BookmarksController implements Initializable {
                     break;
                 }
             }
-            
+
         });
         
         bookmarksButton.setOnShowing((Event t) -> {            
@@ -150,6 +158,8 @@ public class BookmarksController implements Initializable {
         
         for (OBSMetaConfig item : person.getWatchList()) {
             MenuItem entry = new MenuItem(item.toString());
+            FontIcon bookmarkIcon = new FontIcon("icm-bookmark"); 
+            entry.setGraphic(bookmarkIcon);
             entry.setOnAction((ActionEvent t) -> {
                 logger.log(Level.INFO, "Bookmark clicked: {0}", item);
                 browserController.goTo(item.toString());
