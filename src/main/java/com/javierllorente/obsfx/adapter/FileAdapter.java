@@ -16,6 +16,7 @@
 package com.javierllorente.obsfx.adapter;
 
 import com.javierllorente.jobs.entity.OBSEntry;
+import com.javierllorente.obsfx.util.Utils;
 import java.util.Date;
 
 /**
@@ -34,7 +35,7 @@ public class FileAdapter {
     }
 
     public String getSize() {
-        return entry.getSize();
+        return Utils.bytesToHumanReadableFormat(entry.getSize());
     }
 
     public Date getLastModified() {

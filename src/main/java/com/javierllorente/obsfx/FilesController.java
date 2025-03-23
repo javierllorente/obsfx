@@ -17,6 +17,7 @@ package com.javierllorente.obsfx;
 
 import com.javierllorente.jobs.entity.OBSEntry;
 import com.javierllorente.obsfx.adapter.FileAdapter;
+import com.javierllorente.obsfx.util.Utils;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -56,6 +57,14 @@ public class FilesController extends DataController implements Initializable {
         filesTable.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("size"));
         filesTable.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("lastModified"));
 
+        TableColumn<FileAdapter, String> sizeColumn
+                = (TableColumn<FileAdapter, String>) filesTable.getColumns().get(1);        
+        sizeColumn.setComparator((t, t1) -> {
+            long bytes1 = Utils.humanReadableFormatToBytes(t);
+            long bytes2 = Utils.humanReadableFormatToBytes(t1);
+            return Long.compare(bytes1, bytes2);
+        });
+        
         TableColumn<FileAdapter, Date> lastModifiedColumn
                 = (TableColumn<FileAdapter, Date>) filesTable.getColumns().get(2);
         lastModifiedColumn.setCellFactory((TableColumn<FileAdapter, Date> p) -> {
@@ -73,7 +82,7 @@ public class FilesController extends DataController implements Initializable {
                 }
             };
             return tableCell;
-        });
+        });        
     }
     
     public void set(List<OBSEntry> files) {
@@ -98,5 +107,6 @@ public class FilesController extends DataController implements Initializable {
     
     public boolean isEmpty() {
         return filesTable.getItems().isEmpty();
-    }    
+    } 
+    
 }
