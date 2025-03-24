@@ -65,7 +65,6 @@
             <groupId>jakarta.ws.rs</groupId>
             <artifactId>jakarta.ws.rs-api</artifactId>
             <version>4.0.0</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
