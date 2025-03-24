@@ -8,11 +8,21 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import org.fxmisc.richtext.CodeArea?>
+<?import org.fxmisc.flowless.VirtualizedScrollPane?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javierllorente.obsfx.LogViewerController">
    <children>
-      <TextArea fx:id="textArea" editable="false" VBox.vgrow="ALWAYS" />
+       <VirtualizedScrollPane VBox.vgrow="ALWAYS">
+           <content>
+               <CodeArea fx:id="codeArea" editable="false" wrapText="true">
+                   <padding>
+                       <Insets right="2" left="2" />
+                   </padding>
+               </CodeArea>
+           </content>
+       </VirtualizedScrollPane>
       <HBox>
          <children>
             <Label fx:id="notFoundLabel" prefHeight="23.0" text="%logviewer.notfound" visible="false">

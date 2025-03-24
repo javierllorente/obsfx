@@ -22,8 +22,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import org.fxmisc.richtext.CodeArea;
 
 /**
  * FXML Controller class
@@ -33,7 +33,7 @@ import javafx.scene.control.TextField;
 public class LogViewerController implements Initializable {
 
     @FXML
-    TextArea textArea;
+    CodeArea codeArea;
     
     @FXML
     TextField searchTextField;
@@ -62,22 +62,22 @@ public class LogViewerController implements Initializable {
     }
     
     public void setText(String text) {
-        textArea.setText(text);
-        textArea.positionCaret(textArea.getLength());
+        codeArea.replaceText(text);
+        codeArea.moveTo(codeArea.getLength());
         searchTextField.requestFocus();
     }
     
     @FXML    
     private void findPrevious() {
-        String log = textArea.getText();
+        String log = codeArea.getText();
         String searchText = searchTextField.getText();
 
         if (log == null || log.isEmpty()) {
-            textArea.selectRange(0,0);
+            codeArea.selectRange(0,0);
             return;
         }
 
-        IndexRange selection = textArea.getSelection();
+        IndexRange selection = codeArea.getSelection();
         int end = (selection == null) || (selection.getStart() == 0) 
                 ? log.length() : selection.getStart();
         int searchTextStart = log.substring(0, end).lastIndexOf(searchText);
@@ -87,24 +87,25 @@ public class LogViewerController implements Initializable {
         notFoundLabel.setVisible(!found);
                 
         if (!found) {
-            textArea.selectRange(end, end);
+            codeArea.selectRange(end, end);
             return;
         }
 
-        textArea.selectRange(searchTextStart, searchTextStart + searchText.length());
+        codeArea.selectRange(searchTextStart, searchTextStart + searchText.length());
+        codeArea.requestFollowCaret();
     }
     
     @FXML
     private void findNext() {
-        String log = textArea.getText();
+        String log = codeArea.getText();
         String searchText = searchTextField.getText();
 
         if (log == null || log.isEmpty()) {
-            textArea.selectRange(0, 0);
+            codeArea.selectRange(0, 0);
             return;
         }
 
-        IndexRange selection = textArea.getSelection();
+        IndexRange selection = codeArea.getSelection();
         int start = (selection != null) ? selection.getEnd() : 0;
         int searchTextStart = log.indexOf(searchText, start);        
         boolean found = (searchTextStart != -1);
@@ -113,11 +114,12 @@ public class LogViewerController implements Initializable {
         notFoundLabel.setVisible(!found);
          
         if (!found) {
-            textArea.selectRange(start, start);
+            codeArea.selectRange(start, start);
             return;
         }
 
-        textArea.selectRange(searchTextStart, searchTextStart + searchText.length());
+        codeArea.selectRange(searchTextStart, searchTextStart + searchText.length());
+        codeArea.requestFollowCaret();
     }
     
 }
