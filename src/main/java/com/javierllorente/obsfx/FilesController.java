@@ -18,17 +18,32 @@ package com.javierllorente.obsfx;
 import com.javierllorente.jobs.entity.OBSEntry;
 import com.javierllorente.obsfx.adapter.FileAdapter;
 import com.javierllorente.obsfx.util.Utils;
+import jakarta.ws.rs.ClientErrorException;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.stage.FileChooser;
 
 /**
  * FXML Controller class
@@ -37,8 +52,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
  */
 public class FilesController extends DataController implements Initializable {
     
+    private String prj;
     private String pkg;
+    private BrowserController browserController;
 
+    @FXML
+    private Button downloadButton;
+    
+    @FXML
+    private Button deleteButton;
+    
     @FXML
     private TableView<FileAdapter> filesTable;
     
@@ -50,6 +73,16 @@ public class FilesController extends DataController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         initFileTableColumns();
+        
+        BooleanBinding noSelection = filesTable.getSelectionModel().selectedItemProperty().isNull();
+        downloadButton.disableProperty().bind(noSelection);
+        deleteButton.disableProperty().bind(noSelection);
+        
+        filesTable.setOnKeyPressed((t) -> {
+            if (t.getCode() == KeyCode.DELETE) {
+                handleDelete();
+            }
+        });
     }
     
     private void initFileTableColumns() {
@@ -85,10 +118,82 @@ public class FilesController extends DataController implements Initializable {
         });        
     }
     
+    @FXML
+    public void handleDownload() {
+        String fileName = filesTable.getSelectionModel().getSelectedItem().getName();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(App.getBundle().getString("files.download.save_as"));
+        fileChooser.setInitialFileName(fileName);
+
+        File destinationFile = fileChooser.showSaveDialog(App.getWindow());
+        if (destinationFile != null) {
+            File sourceFile = App.getOBS().downloadFile(prj, pkg, fileName);
+            try {
+                Files.copy(sourceFile.toPath(), destinationFile.toPath(), 
+                        StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException ex) {
+                Logger.getLogger(FilesController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    @FXML
+    public void handleUpload() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(App.getBundle().getString("files.upload.select"));
+  
+        File selectedFile = fileChooser.showOpenDialog(App.getWindow());
+        if (selectedFile != null) {
+            try {
+                App.getOBS().uploadFile(prj, pkg, selectedFile);
+                filesTable.getItems().clear();
+                browserController.startFilesTask(prj, pkg);
+            } catch (ClientErrorException ex) {
+                browserController.showExceptionAlert(ex);
+            }
+        }
+    }
+    
+    @FXML
+    public void handleDelete() {
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.initOwner(App.getWindow());
+        confirmDialog.setTitle(App.getBundle().getString("files.delete.title"));
+        confirmDialog.setHeaderText(App.getBundle().getString("files.delete.header_text"));
+        confirmDialog.setContentText(filesTable.getSelectionModel().getSelectedItem().getName());
+        
+        ButtonBar buttonBar = (ButtonBar) confirmDialog.getDialogPane().lookup(".button-bar");
+        buttonBar.setButtonOrder(ButtonBar.BUTTON_ORDER_WINDOWS);        
+        Button okButton = (Button) confirmDialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.setDefaultButton(false);        
+        Button cancelButton = (Button) confirmDialog.getDialogPane().lookupButton(ButtonType.CANCEL);
+        cancelButton.setDefaultButton(true);
+
+        Optional<ButtonType> result = confirmDialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            String fileName = filesTable.getSelectionModel().getSelectedItem().getName();
+            try {
+                App.getOBS().deleteFile(prj, pkg, fileName);
+                filesTable.getItems().clear();
+                browserController.startFilesTask(prj, pkg);
+            } catch (ClientErrorException ex) {
+                browserController.showExceptionAlert(ex);
+            }
+        }
+    }
+    
     public void set(List<OBSEntry> files) {
         files.stream().map(FileAdapter::new).forEach(filesTable.getItems()::add);
         filesTable.sort();
         dataLoaded = true;
+    }    
+
+    public String getPrj() {
+        return prj;
+    }
+
+    public void setPrj(String prj) {
+        this.prj = prj;
     }
 
     public String getPkg() {
@@ -97,10 +202,15 @@ public class FilesController extends DataController implements Initializable {
 
     public void setPkg(String pkg) {
         this.pkg = pkg;
-    }    
+    }
+    
+    public void setBrowserController(BrowserController browserController) {
+        this.browserController = browserController;
+    }
     
     public void clear() {
         filesTable.getItems().clear();
+        prj = null;
         pkg = null;
         dataLoaded = false;
     }

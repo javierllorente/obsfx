@@ -181,6 +181,7 @@ public class BrowserController implements Initializable {
 
         bookmarksController.setBrowserController(this);
         overviewController.setBrowserController(this);
+        filesController.setBrowserController(this);
         requestsController.setBrowserController(this);
     }
 
@@ -615,6 +616,7 @@ public class BrowserController implements Initializable {
         filesTask.setOnSucceeded((e) -> {
             List<OBSEntry> files = filesTask.getValue();
             filesController.set(files);
+            filesController.setPrj(prj);
             filesController.setPkg(pkg);
             progressIndicator.setVisible(false);
         });
