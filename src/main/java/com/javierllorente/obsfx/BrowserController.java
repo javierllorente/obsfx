@@ -788,7 +788,8 @@ public class BrowserController implements Initializable {
                 + "JavaFX: " + System.getProperty("javafx.runtime.version") + "\n"
                 + App.getBundle().getString("about.libraries")
                 + "jobs, controlsfx, "
-                + "ikonli-javafx, ikonli-icomoon-pack" + "\n"
+                + "ikonli-javafx, ikonli-icomoon-pack, "
+                + "richtextfx" + "\n"
                 + App.getBundle().getString("about.locale") + Locale.getDefault() + "\n\n"
                 + App.getBundle().getString("about.copyright") + "\n"
                 + App.getBundle().getString("about.license"));
