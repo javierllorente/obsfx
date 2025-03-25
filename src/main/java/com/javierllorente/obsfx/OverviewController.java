@@ -19,11 +19,13 @@ import com.javierllorente.jobs.entity.OBSMetaConfig;
 import com.javierllorente.jobs.entity.OBSPackage;
 import com.javierllorente.jobs.entity.OBSResult;
 import com.javierllorente.jobs.entity.OBSRevision;
+import jakarta.ws.rs.ClientErrorException;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,7 +35,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -65,6 +70,9 @@ public class OverviewController extends DataController implements Initializable,
     
     @FXML
     private Button downloadButton;
+    
+    @FXML
+    private Button deleteButton;
     
     @FXML
     private FontIcon historyIcon;
@@ -107,6 +115,7 @@ public class OverviewController extends DataController implements Initializable,
                 .or(buildResultsController.selectedItemProperty().isNull()));        
         refreshButton.disableProperty().bind((packageProperty.isNull()));
         downloadButton.disableProperty().bind(packageProperty.isNull());
+        deleteButton.disableProperty().bind(packageProperty.isNull());
         link.managedProperty().bind(link.textProperty().isNotEmpty());
         buildResultsController.visibleProperty().bind(packageProperty.isNotNull());
         
@@ -212,6 +221,32 @@ public class OverviewController extends DataController implements Initializable,
                 .showDocument("https://software.opensuse.org/download.html?project=" 
                         + projectProperty.get() + "&package=" + packageProperty.get());
     }
+    
+    @FXML
+    public void handleDelete() {
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.initOwner(App.getWindow());
+        confirmDialog.setTitle(App.getBundle().getString("files.delete.title"));
+        confirmDialog.setHeaderText(App.getBundle().getString("overview.delete.header_text"));
+        confirmDialog.setContentText(getPkg());
+        
+        ButtonBar buttonBar = (ButtonBar) confirmDialog.getDialogPane().lookup(".button-bar");
+        buttonBar.setButtonOrder(ButtonBar.BUTTON_ORDER_WINDOWS);        
+        Button okButton = (Button) confirmDialog.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.setDefaultButton(false);        
+        Button cancelButton = (Button) confirmDialog.getDialogPane().lookupButton(ButtonType.CANCEL);
+        cancelButton.setDefaultButton(true);
+
+        Optional<ButtonType> result = confirmDialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                App.getOBS().deletePackage(getPrj(), getPkg());
+                browserController.startPackagesTask();
+            } catch (ClientErrorException ex) {
+                browserController.showExceptionAlert(ex);
+            }
+        }
+    }
 
     @Override
     public void setAll(List<OBSResult> items) {
@@ -249,6 +284,7 @@ public class OverviewController extends DataController implements Initializable,
         viewLogButton.setVisible(visible);
         refreshButton.setVisible(visible);
         downloadButton.setVisible(visible);
+        deleteButton.setVisible(visible);
     }
     
 }

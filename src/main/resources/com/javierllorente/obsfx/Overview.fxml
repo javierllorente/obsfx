@@ -53,6 +53,11 @@
                                     <FontIcon iconLiteral="icm-download" />
                                 </graphic>
                             </Button>
+                            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDelete" visible="false">
+                                <graphic>
+                                    <FontIcon iconLiteral="icm-bin" />
+                                </graphic>
+                            </Button>
                         </children>
                     </HBox>
                   <HBox alignment="BOTTOM_RIGHT" spacing="5" VBox.vgrow="ALWAYS">

@@ -969,7 +969,7 @@ public class BrowserController implements Initializable {
         alert.show();
     }
 
-    private void startPackagesTask() {        
+    public void startPackagesTask() {        
         if (!App.getOBS().isAuthenticated()) {
             showNotAuthenticatedAlert();
             return;
