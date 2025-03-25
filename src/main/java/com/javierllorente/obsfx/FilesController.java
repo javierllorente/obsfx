@@ -17,6 +17,7 @@ package com.javierllorente.obsfx;
 
 import com.javierllorente.jobs.entity.OBSEntry;
 import com.javierllorente.obsfx.adapter.FileAdapter;
+import com.javierllorente.obsfx.alert.ConfirmAlert;
 import com.javierllorente.obsfx.util.Utils;
 import jakarta.ws.rs.ClientErrorException;
 import java.io.File;
@@ -36,7 +37,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -156,20 +156,13 @@ public class FilesController extends DataController implements Initializable {
     
     @FXML
     public void handleDelete() {
-        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmDialog.initOwner(App.getWindow());
-        confirmDialog.setTitle(App.getBundle().getString("files.delete.title"));
-        confirmDialog.setHeaderText(App.getBundle().getString("files.delete.header_text"));
-        confirmDialog.setContentText(filesTable.getSelectionModel().getSelectedItem().getName());
-        
-        ButtonBar buttonBar = (ButtonBar) confirmDialog.getDialogPane().lookup(".button-bar");
-        buttonBar.setButtonOrder(ButtonBar.BUTTON_ORDER_WINDOWS);        
-        Button okButton = (Button) confirmDialog.getDialogPane().lookupButton(ButtonType.OK);
-        okButton.setDefaultButton(false);        
-        Button cancelButton = (Button) confirmDialog.getDialogPane().lookupButton(ButtonType.CANCEL);
-        cancelButton.setDefaultButton(true);
+        ConfirmAlert alert = new ConfirmAlert(Alert.AlertType.CONFIRMATION);
+        alert.initOwner(App.getWindow());
+        alert.setTitle(App.getBundle().getString("files.delete.title"));
+        alert.setHeaderText(App.getBundle().getString("files.delete.header_text"));
+        alert.setContentText(filesTable.getSelectionModel().getSelectedItem().getName());
 
-        Optional<ButtonType> result = confirmDialog.showAndWait();
+        Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             String fileName = filesTable.getSelectionModel().getSelectedItem().getName();
             try {
