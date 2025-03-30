@@ -8,8 +8,8 @@ JAVAFX_HOME=$build_dir/javafx
 jlink_path=$JAVA_HOME/bin/
 
 module_path=$JAVAFX_HOME
-modules=javafx.controls,javafx.fxml,java.base,java.logging,java.prefs,java.xml
-modules+=,java.net.http,java.naming,jdk.crypto.ec
+modules=javafx.controls,javafx.fxml,java.base,java.logging,java.prefs
+modules+=,java.net.http,java.naming,java.rmi,java.compiler
 
 echo "Building runtime image..."
 $jlink_path/jlink --verbose --strip-debug --no-header-files --no-man-pages\

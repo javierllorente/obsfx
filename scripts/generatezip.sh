@@ -24,6 +24,7 @@ launcher=$name.sh
 
 lib_dir=lib
 modules=javafx.controls,javafx.fxml,org.kordamp.ikonli.javafx,org.controlsfx.controls
+modules+=,jakarta.inject,jakarta.annotation,org.apache.logging.log4j.slf4j2.impl
 modules+=,com.javierllorente.jobs
 exports=javafx.base/com.sun.javafx.event=org.controlsfx.controls
 
