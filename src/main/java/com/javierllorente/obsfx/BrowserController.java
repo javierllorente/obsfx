@@ -219,6 +219,9 @@ public class BrowserController implements Initializable {
         autoComplete.setDelay(700);
         
         searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!App.getOBS().isAuthenticated()) {
+                return;
+            }            
             if (!newValue.isBlank()) {
                 startSearchTask(newValue.toLowerCase());
             } else {
