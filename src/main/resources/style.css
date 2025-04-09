@@ -18,6 +18,11 @@
     -fx-icon-color: white !important;
 }
 
+.progress-indicator {
+    -fx-pref-width: 22px;
+    -fx-pref-height: 22px;
+}
+
 #shortcutsTable .column-header-background {
     -fx-max-height: 0;
     -fx-min-height: 0;
