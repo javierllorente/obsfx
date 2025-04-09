@@ -39,7 +39,8 @@ public class RequestAdapter {
     }
     
     public String getSource() {
-        return request.getAction().getSource().toString();
+        return (request.getAction().getSource() == null) ? 
+                "" : request.getAction().getSource().toString();
     }
     
     public String getSourceProject() {
