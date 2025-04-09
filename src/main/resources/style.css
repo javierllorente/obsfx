@@ -1,7 +1,31 @@
+.menu-button > .arrow-button {
+    -fx-padding: 0;
+}
+
+.menu-button > .arrow-button > .arrow {
+    -fx-padding: 0;
+}
+
+.ikonli-font-icon {
+    -fx-icon-color: #475057;
+}
+
+.tool-bar .button .ikonli-font-icon, .tool-bar .menu-button .ikonli-font-icon {
+    -fx-icon-size: 16px;
+}
+
+.menu-item:focused .ikonli-font-icon {
+    -fx-icon-color: white !important;
+}
+
 #shortcutsTable .column-header-background {
     -fx-max-height: 0;
     -fx-min-height: 0;
     -fx-pref-height: 0;
+}
+
+#locationTextField, #searchTextField {
+    -fx-pref-height: 24px;
 }
 
 #searchTextField {
