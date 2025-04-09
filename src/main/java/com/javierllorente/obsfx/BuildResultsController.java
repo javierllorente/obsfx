@@ -22,10 +22,12 @@ import java.util.ResourceBundle;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
@@ -57,37 +59,51 @@ public class BuildResultsController implements Initializable {
                 -> new ReadOnlyStringWrapper((cellData.getValue().getStatus() == null) 
                         ? ""
                         : cellData.getValue().getStatus().getCode()));
-
+        
         statusColumn.setCellFactory((TableColumn<OBSResult, String> p) -> {
-            TableCell<OBSResult, String> tableCell = new TableCell<>() {
+            return new TableCell<OBSResult, String>() {
+                private Color statusColor = Color.BLACK;
+
+                {
+                    table.focusedProperty().addListener((ov, t, t1) -> {
+                        updateColor();
+                    });
+                    table.getSelectionModel().getSelectedIndices().addListener(
+                            (ListChangeListener.Change<? extends Integer> change) -> {
+                                updateColor();
+                            });
+                }
+
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
                     if (empty) {
                         setText(null);
+                        setGraphic(null);
                     } else {
-                        Color color = Color.BLACK;
-                        switch (item) {
-                            case "succeeded":
-                                color = Color.GREEN;
-                                break;
-                            case "failed":
-                            case "unresolvable":
-                            case "broken":
-                                color = Color.RED;
-                                break;
-                            case "disabled":
-                                color = Color.GRAY;
-                                break;
-                        }
+                        statusColor = (switch (item) {
+                            case "succeeded" ->
+                                Color.GREEN;
+                            case "failed", "unresolvable", "broken" ->
+                                Color.RED;
+                            case "disabled" ->
+                                Color.GRAY;
+                            default ->
+                                Color.BLACK;
+                        });
+
                         setText(item);
-                        setTextFill(color);
+                        updateColor();
                     }
                 }
 
+                private void updateColor() {
+                    TableRow<OBSResult> row = getTableRow();
+                    boolean selected = row != null && row.isSelected();
+                    boolean focused = table.isFocused();
+                    setTextFill(selected ? (focused ? Color.WHITE : Color.BLACK) : statusColor);
+                }
             };
-
-            return tableCell;
         });
     }
     
