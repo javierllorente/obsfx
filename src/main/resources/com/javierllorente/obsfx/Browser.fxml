@@ -82,8 +82,9 @@
                     <fx:include fx:id="bookmarks" source="Bookmarks.fxml" />
                     <TextFields fx:id="locationTextField" onKeyPressed="#handleNavigation" promptText="%bar.location" HBox.hgrow="ALWAYS" fx:factory="createClearableTextField" />
                     <TextFields fx:id="searchTextField" onKeyPressed="#handleSearch" prefWidth="250.0" promptText="%search.bar" fx:factory="createClearableTextField" />
-                    <Pane prefWidth="5.0" />
+                    <Pane prefWidth="2.0" />
                     <ProgressIndicator fx:id="progressIndicator" prefHeight="15.0" prefWidth="15.0" visible="false" />
+                    <Pane prefWidth="2.0" />
                     <MenuButton id="menuButton" fx:id="menuButton" mnemonicParsing="false">
                         <items>
                             <MenuItem mnemonicParsing="false" onAction="#handleLogin" text="%menu.login">
