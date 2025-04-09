@@ -55,3 +55,7 @@ This theme makes makes Modena a bit greener
 .tab-pane .tab:selected {
     -fx-focus-color: -primary-color;
 }
+
+.progress-indicator {
+    -fx-progress-color: -primary-color;
+}
