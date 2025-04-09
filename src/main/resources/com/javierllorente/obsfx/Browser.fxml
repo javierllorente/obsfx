@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.SplitPane?>
@@ -73,47 +74,6 @@
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <MenuBar>
-              <menus>
-                <Menu mnemonicParsing="false" text="%menu.file">
-                  <items>
-                      <MenuItem mnemonicParsing="false" onAction="#handleLogin" text="%menu.login">
-                           <graphic>
-                              <FontIcon iconLiteral="icm-user" />
-                           </graphic>
-                      </MenuItem>
-                      <MenuItem accelerator="Shortcut+Q" mnemonicParsing="false" onAction="#handleExit" text="%menu.exit">
-                           <graphic>
-                              <FontIcon iconLiteral="icm-exit" />
-                           </graphic>
-                      </MenuItem>
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="%menu.edit">
-                  <items>
-                      <MenuItem mnemonicParsing="false" onAction="#handleSettings" text="%menu.settings">
-                           <graphic>
-                              <FontIcon iconLiteral="icm-wrench" />
-                           </graphic>
-                      </MenuItem>
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="%menu.help">
-                  <items>
-                    <MenuItem mnemonicParsing="false" onAction="#handleShortcuts" text="%shortcuts">
-                           <graphic>
-                              <FontIcon iconLiteral="icm-keyboard" />
-                           </graphic>
-                    </MenuItem>
-                    <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="%menu.about">
-                           <graphic>
-                              <FontIcon iconLiteral="icm-info" />
-                           </graphic>
-                    </MenuItem>
-                  </items>
-                </Menu>
-              </menus>
-            </MenuBar>
             <ToolBar prefHeight="50.0" prefWidth="200.0">
                 <items>
                     <Button fx:id="homeButton" mnemonicParsing="false" onAction="#goHome" text="%bar.home">
@@ -126,6 +86,38 @@
                     <TextFields fx:id="searchTextField" onKeyPressed="#handleSearch" prefWidth="250.0" promptText="%search.bar" fx:factory="createClearableTextField" />
                     <Pane prefWidth="5.0" />
                     <ProgressIndicator fx:id="progressIndicator" prefHeight="15.0" prefWidth="15.0" visible="false" />
+                    <MenuButton id="menuButton" fx:id="menuButton" mnemonicParsing="false">
+                        <items>
+                            <MenuItem mnemonicParsing="false" onAction="#handleLogin" text="%menu.login">
+                                <graphic>
+                                    <FontIcon iconLiteral="icm-user" />
+                                </graphic>
+                            </MenuItem>
+                            <MenuItem mnemonicParsing="false" onAction="#handleSettings" text="%menu.settings">
+                                <graphic>
+                                    <FontIcon iconLiteral="icm-wrench" />
+                                </graphic>
+                            </MenuItem>
+                            <MenuItem mnemonicParsing="false" onAction="#handleShortcuts" text="%shortcuts">
+                                <graphic>
+                                    <FontIcon iconLiteral="icm-keyboard" />
+                                </graphic>
+                            </MenuItem>
+                            <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="%menu.about">
+                                <graphic>
+                                    <FontIcon iconLiteral="icm-info" />
+                                </graphic>
+                            </MenuItem>
+                            <MenuItem accelerator="Shortcut+Q" mnemonicParsing="false" onAction="#handleExit" text="%menu.exit">
+                                <graphic>
+                                    <FontIcon iconLiteral="icm-exit" />
+                                </graphic>
+                            </MenuItem>
+                        </items>
+                        <graphic>
+                            <FontIcon iconLiteral="icm-menu" />
+                        </graphic>
+                    </MenuButton>
                 </items>
             </ToolBar>
          </children>
