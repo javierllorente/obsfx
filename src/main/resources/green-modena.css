@@ -1,0 +1,57 @@
+/* 
+Green Modena
+This theme makes makes Modena a bit greener
+(C) 2025 Javier Llorente
+*/
+
+.root {
+    -primary-color: #24a873;
+}
+
+.button:focused, .menu-button:focused {
+    -fx-focus-color: -primary-color;
+}
+
+.context-menu {
+    -fx-selection-bar: -primary-color;
+    -fx-selection-bar-non-focused: -primary-color;
+    -fx-text-fill: white;
+}
+
+.menu-item:selected {
+    -fx-background-color: -primary-color;
+}
+
+.menu-item:focused > .label {
+    -fx-text-fill: white !important;
+}
+
+.menu-item:focused .ikonli-font-icon {
+    -fx-icon-color: white !important;
+}
+
+.text-input {
+    -fx-focus-color: -primary-color;
+    -fx-highlight-fill: -primary-color;
+}
+
+.list-view:focused .list-cell:filled:selected {
+    -fx-background-color: -primary-color;
+}
+
+.auto-complete-popup .list-cell:filled:hover {
+    -fx-background-color: -primary-color !important;
+    -fx-text-fill: white;
+}
+
+.list-view, .table-view, .scroll-pane, .check-box, .radio-button {
+    -fx-focus-color: -primary-color;
+}
+
+.table-view:focused .table-row-cell:filled:selected {
+    -fx-background-color: -primary-color;
+}
+
+.tab-pane .tab:selected {
+    -fx-focus-color: -primary-color;
+}

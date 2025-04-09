@@ -46,6 +46,7 @@ public class App extends Application {
     public static final String HOME_PROJECTS = "home_projects";
     public static final String AUTOLOGIN = "autologin"; 
     
+    private final String applicationTheme = "green-modena.css";
     private final String applicationStyle = "style.css";
     private final String applicationBundle = getClass().getPackageName() + ".i18n.ApplicationBundle";
     
@@ -65,6 +66,7 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fXMLLoader = getFXMLLoader("Browser");
         scene = new Scene(fXMLLoader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
+        scene.getStylesheets().add(applicationTheme);
         scene.getStylesheets().add(applicationStyle);
         BrowserController browserController = fXMLLoader.getController();
         browserController.setAccelerators(scene.getAccelerators());

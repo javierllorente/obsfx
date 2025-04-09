@@ -12,7 +12,7 @@
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javierllorente.obsfx.LogViewerController">
+<VBox prefHeight="600.0" prefWidth="800.0" stylesheets="@/green-modena.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javierllorente.obsfx.LogViewerController">
    <children>
        <VirtualizedScrollPane VBox.vgrow="ALWAYS">
            <content>
