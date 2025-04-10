@@ -42,7 +42,6 @@ import com.javierllorente.obsfx.task.RevisionsTask;
 import com.javierllorente.obsfx.task.SearchTask;
 import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.ServerErrorException;
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -53,6 +52,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -111,6 +111,7 @@ public class BrowserController implements Initializable {
     private String currentPackage;
     private String lastProject;
     private String lastPackage;
+    private final AtomicInteger runningTasks = new AtomicInteger(0);
 
     @FXML
     private BorderPane borderPane;
@@ -530,16 +531,21 @@ public class BrowserController implements Initializable {
 
     private void startPrjMetaConfigTask(String prj) {       
         PrjMetaConfigTask prjMetaConfigTask = new PrjMetaConfigTask(prj);
+        runningTasks.incrementAndGet();
         progressIndicator.setVisible(true);
         new Thread(prjMetaConfigTask).start();
 
         prjMetaConfigTask.setOnSucceeded((e) -> {
             OBSProject project = prjMetaConfigTask.getValue();
             overviewController.setMetaConfig(project);
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
         });
         prjMetaConfigTask.setOnFailed((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             overviewController.clear();
             showExceptionAlert(prjMetaConfigTask.getException());
         });
@@ -547,16 +553,21 @@ public class BrowserController implements Initializable {
     
     private void startPkgMetaConfigTask(String prj, String pkg) {
         PkgMetaConfigTask pkgMetaConfigTask = new PkgMetaConfigTask(prj, pkg);
+        runningTasks.incrementAndGet();
         progressIndicator.setVisible(true);
         new Thread(pkgMetaConfigTask).start();
 
         pkgMetaConfigTask.setOnSucceeded((e) -> {
             OBSPackage obsPackage = pkgMetaConfigTask.getValue();
             overviewController.setMetaConfig(obsPackage);
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
         });
         pkgMetaConfigTask.setOnFailed((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             overviewController.clear();
             showExceptionAlert(pkgMetaConfigTask.getException());
         });
@@ -564,20 +575,26 @@ public class BrowserController implements Initializable {
 
     public void startBuildLogTask(String prj, String repository, String arch, String pkg) {
         BuildLogTask buildLogTask = new BuildLogTask(prj, repository, arch, pkg);
+        runningTasks.incrementAndGet();
         progressIndicator.setVisible(true);
         new Thread(buildLogTask).start();
         buildLogTask.setOnSucceeded((e) -> {
             overviewController.setBuildLog(buildLogTask.getValue());
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
         });
         buildLogTask.setOnFailed((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             showExceptionAlert(buildLogTask.getException());
         });
     }
         
     private void startLatestRevisionTask(String prj, String pkg) {
         RevisionsTask latestRevisionsTask = new RevisionsTask(prj, pkg, true);
+        runningTasks.incrementAndGet();
         progressIndicator.setVisible(true);
         new Thread(latestRevisionsTask).start();
         latestRevisionsTask.setOnSucceeded((e) -> {
@@ -586,10 +603,14 @@ public class BrowserController implements Initializable {
             } else {
                 overviewController.clearLatestRevision();
             }
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
         });
         latestRevisionsTask.setOnFailed((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             showExceptionAlert(latestRevisionsTask.getException());
         });
 
@@ -597,6 +618,7 @@ public class BrowserController implements Initializable {
 
     public void startBuildResultsTask(String prj, String pkg, TableSetter table) {
         BuildResultsTask buildResultsTask = new BuildResultsTask(prj, pkg);
+        runningTasks.incrementAndGet();
         progressIndicator.setVisible(true);
         new Thread(buildResultsTask).start();
         buildResultsTask.setOnSucceeded((e) -> {
@@ -604,16 +626,21 @@ public class BrowserController implements Initializable {
             if (buildResults != null) {
                 table.setAll(buildResults);
             }
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
         });
         buildResultsTask.setOnFailed((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             showExceptionAlert(buildResultsTask.getException());
         });
     }
 
     public void startFilesTask(String prj, String pkg) {
-        FilesTask filesTask = new FilesTask(prj, pkg);        
+        FilesTask filesTask = new FilesTask(prj, pkg);
+        runningTasks.incrementAndGet();        
         progressIndicator.setVisible(true);
         new Thread(filesTask).start();        
         filesTask.setOnSucceeded((e) -> {
@@ -621,32 +648,42 @@ public class BrowserController implements Initializable {
             filesController.set(files);
             filesController.setPrj(prj);
             filesController.setPkg(pkg);
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
         });
         filesTask.setOnFailed((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             showExceptionAlert(filesTask.getException());
         });
     }
 
     public void startRevisionsTask(String prj, String pkg) {
         RevisionsTask revisionsTask = new RevisionsTask(prj, pkg, false);
+        runningTasks.incrementAndGet();
         progressIndicator.setVisible(true);
         new Thread(revisionsTask).start();        
         revisionsTask.setOnSucceeded((e) -> {
             List<OBSRevision> revisions = revisionsTask.getValue();
             revisionsController.set(revisions);
             revisionsController.setPkg(pkg);
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
         });
         revisionsTask.setOnFailed((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             showExceptionAlert(revisionsTask.getException());
         });
     }
 
     public void startProjectRequestsTask(String prj) {
         ProjectRequestsTask projectRequestsTask = new ProjectRequestsTask(prj);
+        runningTasks.incrementAndGet();
         progressIndicator.setVisible(true);
         new Thread(projectRequestsTask).start();
         projectRequestsTask.setOnSucceeded((e) -> {
@@ -654,16 +691,21 @@ public class BrowserController implements Initializable {
             requestsController.set(requests);
             requestsController.setPrj(prj);
             requestsController.setPkg(null);
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
         });
         projectRequestsTask.setOnFailed((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             showExceptionAlert(projectRequestsTask.getException());
         });
     }
     
     public void startPackageRequestsTask(String prj, String pkg) {
         PackageRequestsTask packageRequestsTask = new PackageRequestsTask(prj, pkg);
+        runningTasks.incrementAndGet();
         progressIndicator.setVisible(true);
         new Thread(packageRequestsTask).start();
         packageRequestsTask.setOnSucceeded((e) -> {
@@ -671,35 +713,47 @@ public class BrowserController implements Initializable {
             requestsController.set(requests);
             requestsController.setPrj(prj);            
             requestsController.setPkg(pkg);
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
         });
         packageRequestsTask.setOnFailed((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             showExceptionAlert(packageRequestsTask.getException());
         });
     }
 
     public void startProjectsTask(boolean includeHomePrjs) {        
         ProjectsTask projectsTask = new ProjectsTask(includeHomePrjs);
+        runningTasks.incrementAndGet();
         progressIndicator.setVisible(true);        
         new Thread(projectsTask).start();
         projectsTask.setOnSucceeded((t) -> {
             projects = projectsTask.getValue();
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
         });
         projectsTask.setOnFailed((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             showExceptionAlert(projectsTask.getException());
         });
     }
     
     public void startSearchTask(String pkg) {
         SearchTask searchTask = new SearchTask(pkg);
+        runningTasks.incrementAndGet();
         progressIndicator.setVisible(true);
         new Thread(searchTask).start();
         
         searchTask.setOnSucceeded((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             searchResults.clear();
             if (searchTask.getValue() != null) {
                 searchResults.addAll(searchTask.getValue());
@@ -707,36 +761,46 @@ public class BrowserController implements Initializable {
         });
         
         searchTask.setOnFailed((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             showExceptionAlert(searchTask.getException());
         });
     }
     
     public void startDiffTask(String id) {
         DiffTask diffTask = new DiffTask(id);
+        runningTasks.incrementAndGet();
         progressIndicator.setVisible(true);
         new Thread(diffTask).start();
         
         diffTask.setOnSucceeded((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             if (diffTask.getValue() != null) {
                 requestsController.setDiff(diffTask.getValue());
             }
         });
         
         diffTask.setOnFailed((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             showExceptionAlert(diffTask.getException());
         });
     }
     
     public void startChangeRequestTask(String id, String comments, boolean accepted) {
         ChangeRequestTask changeRequestTask = new ChangeRequestTask(id, comments, accepted);
+        runningTasks.incrementAndGet();
         progressIndicator.setVisible(true);
         new Thread(changeRequestTask).start();
         
         changeRequestTask.setOnSucceeded((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
 
             if (changeRequestTask.getValue() != null) {
                 OBSStatus status = changeRequestTask.getValue();
@@ -752,7 +816,9 @@ public class BrowserController implements Initializable {
         });
         
         changeRequestTask.setOnFailed((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             showExceptionAlert(changeRequestTask.getException());
         });
     }
@@ -854,6 +920,7 @@ public class BrowserController implements Initializable {
         Task<Void> authTask = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
+                runningTasks.incrementAndGet();
                 progressIndicator.setVisible(true);
                 App.getOBS().setUsername(username);
                 App.getOBS().setPassword(password);
@@ -872,13 +939,17 @@ public class BrowserController implements Initializable {
                     startProjectsTask(includeHomePrjs);
                     loadBookmarks();
                 }
-                progressIndicator.setVisible(false);
+                if (runningTasks.decrementAndGet() == 0) {
+                    progressIndicator.setVisible(false);
+                }
             }
 
             @Override
             protected void failed() {
                 super.failed();
-                progressIndicator.setVisible(false);
+                if (runningTasks.decrementAndGet() == 0) {
+                    progressIndicator.setVisible(false);
+                }
                 logger.info("auth failed!");
                 
                 Throwable exception = getException();                
@@ -984,6 +1055,7 @@ public class BrowserController implements Initializable {
         
         PackagesTask packagesTask = new PackagesTask(prj);
         overviewController.toggleButtons(!pkg.isBlank());
+        runningTasks.incrementAndGet();
         progressIndicator.setVisible(true);
         new Thread(packagesTask).start();
 
@@ -993,7 +1065,9 @@ public class BrowserController implements Initializable {
             bookmarksController.setPkg(pkg);
             List<String> packages = packagesTask.getValue();
             packagesObservableList.setAll(packages);
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
 
             logger.log(Level.INFO, "package = {0}", pkg);
             if (!pkg.isEmpty()) {
@@ -1004,7 +1078,9 @@ public class BrowserController implements Initializable {
         });
         
         packagesTask.setOnFailed((t) -> {
-            progressIndicator.setVisible(false);
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
             // FIXME: clear?
             packagesListView.getSelectionModel().clearSelection();
             packagesObservableList.clear();
@@ -1035,7 +1111,9 @@ public class BrowserController implements Initializable {
     }
     
     public void showExceptionAlert(Throwable throwable) {
-        progressIndicator.setVisible(false);
+        if (runningTasks.decrementAndGet() == 0) {
+            progressIndicator.setVisible(false);
+        }
         ExceptionAlert exceptionAlert = new ExceptionAlert(borderPane.getScene().getWindow());
         exceptionAlert.setHeader(throwable.getMessage());        
         exceptionAlert.setThrowable(throwable);
