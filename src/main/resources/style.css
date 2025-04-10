@@ -36,8 +36,8 @@
 #searchTextField {
     -fx-background-image: url("search.png");
     -fx-background-repeat: no-repeat;
-    -fx-background-position: left center;
-    -fx-padding: 4 4 4 20;
+    -fx-background-position: left 2px center;
+    -fx-padding: 4 4 4 24;
 }
 
 #packages {
