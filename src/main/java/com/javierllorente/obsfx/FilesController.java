@@ -145,7 +145,7 @@ public class FilesController extends DataController implements Initializable {
         File selectedFile = fileChooser.showOpenDialog(App.getWindow());
         if (selectedFile != null) {
             try {
-                App.getOBS().uploadFile(prj, pkg, selectedFile);
+                browserController.uploadFile(prj, pkg, selectedFile);
                 filesTable.getItems().clear();
                 browserController.startFilesTask(prj, pkg);
             } catch (ClientErrorException ex) {
@@ -166,7 +166,7 @@ public class FilesController extends DataController implements Initializable {
         if (result.isPresent() && result.get() == ButtonType.OK) {
             String fileName = filesTable.getSelectionModel().getSelectedItem().getName();
             try {
-                App.getOBS().deleteFile(prj, pkg, fileName);
+                browserController.deleteFile(prj, pkg, fileName);
                 filesTable.getItems().clear();
                 browserController.startFilesTask(prj, pkg);
             } catch (ClientErrorException ex) {

@@ -42,6 +42,7 @@ import com.javierllorente.obsfx.task.RevisionsTask;
 import com.javierllorente.obsfx.task.SearchTask;
 import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.ServerErrorException;
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -782,6 +783,24 @@ public class BrowserController implements Initializable {
         changeRequestTask.setOnFailed((t) -> {
             showExceptionAlert(changeRequestTask.getException());
         });
+    }
+        
+    public void uploadFile(String prj, String pkg, File file) {
+        runningTasks.incrementAndGet();
+        progressIndicator.setVisible(true);
+        App.getOBS().uploadFile(prj, pkg, file);
+        if (runningTasks.decrementAndGet() == 0) {
+            progressIndicator.setVisible(false);
+        }
+    }
+    
+    public void deleteFile(String prj, String pkg, String fileName){
+        runningTasks.incrementAndGet();
+        progressIndicator.setVisible(true);
+        App.getOBS().deleteFile(prj, pkg, fileName);
+        if (runningTasks.decrementAndGet() == 0) {
+            progressIndicator.setVisible(false);
+        }
     }
 
     public void loadBookmarks() {
