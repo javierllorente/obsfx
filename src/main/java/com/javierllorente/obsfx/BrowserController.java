@@ -839,8 +839,9 @@ public class BrowserController implements Initializable {
             clear();
             App.getOBS().logout();
         } else {
-            progressIndicator.setVisible(true);
             try {
+                runningTasks.incrementAndGet();
+                progressIndicator.setVisible(true);
                 String usernameText = preferences.get(App.USERNAME, "");
                 String passwordText = App.getAuthTokenEncryptor()
                         .decrypt(preferences.get(App.PASSWORD, ""));
@@ -861,13 +862,18 @@ public class BrowserController implements Initializable {
                     Optional<Pair<String, String>> result = dialog.showAndWait();
                     result.ifPresentOrElse((credentialsEntered) -> {
                         authenticate(credentialsEntered.getKey(), credentialsEntered.getValue());
-                    }, () -> progressIndicator.setVisible(false));
+                    }, () -> {
+                        // Do nothing
+                    });
                 } else {                    
                     if (apiUri.endsWith("/")) {
                         apiUri = apiUri.substring(0, apiUri.length() - 1);
                     }                    
                     App.getOBS().setApiUri(new URI(apiUri));
                     authenticate(usernameText, passwordText);
+                }
+                if (runningTasks.decrementAndGet() == 0) {
+                    progressIndicator.setVisible(false);
                 }
             } catch (IllegalBlockSizeException | BadPaddingException 
                     | URISyntaxException ex) {
@@ -908,9 +914,6 @@ public class BrowserController implements Initializable {
             @Override
             protected void failed() {
                 super.failed();
-                if (runningTasks.decrementAndGet() == 0) {
-                    progressIndicator.setVisible(false);
-                }
                 logger.info("auth failed!");
                 
                 Throwable exception = getException();                
@@ -927,17 +930,26 @@ public class BrowserController implements Initializable {
                                         preferences.put(App.USERNAME, t.getKey());
                                         preferences.put(App.PASSWORD, App
                                                 .getAuthTokenEncryptor().encrypt(t.getValue()));
+                                        if (runningTasks.decrementAndGet() == 0) {
+                                            progressIndicator.setVisible(false);
+                                        }
                                         authenticate(t.getKey(), t.getValue());
                                     } catch (IllegalBlockSizeException | BadPaddingException ex) {
                                         showExceptionAlert(ex);
                                         Logger.getLogger(BrowserController.class.getName()).log(Level.SEVERE, null, ex);
                                     }
-                                }, () -> progressIndicator.setVisible(false));
+                                }, () -> {
+                                    // Do nothing
+                                }
+                                );
                             });
                             logger.info("Not authorized");
                             break;
                         case NOT_FOUND:
                             Platform.runLater(() -> {
+                                if (runningTasks.decrementAndGet() == 0) {
+                                    progressIndicator.setVisible(false);
+                                }
                                 Alert alert = new Alert(AlertType.ERROR);
                                 alert.initOwner(borderPane.getScene().getWindow());
                                 alert.setResizable(true);
@@ -949,15 +961,11 @@ public class BrowserController implements Initializable {
                                 showSettingsDialog(true, true);
                             });
                             break;
-                        default:
-                            Platform.runLater(() -> {
-                                showExceptionAlert(exception);
-                            });
                     }
                 } else {
-                    Platform.runLater(() -> {
-                        showExceptionAlert(exception);
-                    });
+                    if (runningTasks.decrementAndGet() == 0) {
+                        progressIndicator.setVisible(false);
+                    }
                 }
             }
         };
