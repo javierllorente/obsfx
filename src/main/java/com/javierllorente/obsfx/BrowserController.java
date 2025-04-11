@@ -543,9 +543,6 @@ public class BrowserController implements Initializable {
             }
         });
         prjMetaConfigTask.setOnFailed((t) -> {
-            if (runningTasks.decrementAndGet() == 0) {
-                progressIndicator.setVisible(false);
-            }
             overviewController.clear();
             showExceptionAlert(prjMetaConfigTask.getException());
         });
@@ -565,9 +562,6 @@ public class BrowserController implements Initializable {
             }
         });
         pkgMetaConfigTask.setOnFailed((t) -> {
-            if (runningTasks.decrementAndGet() == 0) {
-                progressIndicator.setVisible(false);
-            }
             overviewController.clear();
             showExceptionAlert(pkgMetaConfigTask.getException());
         });
@@ -585,9 +579,6 @@ public class BrowserController implements Initializable {
             }
         });
         buildLogTask.setOnFailed((t) -> {
-            if (runningTasks.decrementAndGet() == 0) {
-                progressIndicator.setVisible(false);
-            }
             showExceptionAlert(buildLogTask.getException());
         });
     }
@@ -608,9 +599,6 @@ public class BrowserController implements Initializable {
             }
         });
         latestRevisionsTask.setOnFailed((t) -> {
-            if (runningTasks.decrementAndGet() == 0) {
-                progressIndicator.setVisible(false);
-            }
             showExceptionAlert(latestRevisionsTask.getException());
         });
 
@@ -631,9 +619,6 @@ public class BrowserController implements Initializable {
             }
         });
         buildResultsTask.setOnFailed((t) -> {
-            if (runningTasks.decrementAndGet() == 0) {
-                progressIndicator.setVisible(false);
-            }
             showExceptionAlert(buildResultsTask.getException());
         });
     }
@@ -653,9 +638,6 @@ public class BrowserController implements Initializable {
             }
         });
         filesTask.setOnFailed((t) -> {
-            if (runningTasks.decrementAndGet() == 0) {
-                progressIndicator.setVisible(false);
-            }
             showExceptionAlert(filesTask.getException());
         });
     }
@@ -674,9 +656,6 @@ public class BrowserController implements Initializable {
             }
         });
         revisionsTask.setOnFailed((t) -> {
-            if (runningTasks.decrementAndGet() == 0) {
-                progressIndicator.setVisible(false);
-            }
             showExceptionAlert(revisionsTask.getException());
         });
     }
@@ -696,9 +675,6 @@ public class BrowserController implements Initializable {
             }
         });
         projectRequestsTask.setOnFailed((t) -> {
-            if (runningTasks.decrementAndGet() == 0) {
-                progressIndicator.setVisible(false);
-            }
             showExceptionAlert(projectRequestsTask.getException());
         });
     }
@@ -718,9 +694,6 @@ public class BrowserController implements Initializable {
             }
         });
         packageRequestsTask.setOnFailed((t) -> {
-            if (runningTasks.decrementAndGet() == 0) {
-                progressIndicator.setVisible(false);
-            }
             showExceptionAlert(packageRequestsTask.getException());
         });
     }
@@ -737,9 +710,6 @@ public class BrowserController implements Initializable {
             }
         });
         projectsTask.setOnFailed((t) -> {
-            if (runningTasks.decrementAndGet() == 0) {
-                progressIndicator.setVisible(false);
-            }
             showExceptionAlert(projectsTask.getException());
         });
     }
@@ -761,9 +731,6 @@ public class BrowserController implements Initializable {
         });
         
         searchTask.setOnFailed((t) -> {
-            if (runningTasks.decrementAndGet() == 0) {
-                progressIndicator.setVisible(false);
-            }
             showExceptionAlert(searchTask.getException());
         });
     }
@@ -784,9 +751,6 @@ public class BrowserController implements Initializable {
         });
         
         diffTask.setOnFailed((t) -> {
-            if (runningTasks.decrementAndGet() == 0) {
-                progressIndicator.setVisible(false);
-            }
             showExceptionAlert(diffTask.getException());
         });
     }
@@ -816,9 +780,6 @@ public class BrowserController implements Initializable {
         });
         
         changeRequestTask.setOnFailed((t) -> {
-            if (runningTasks.decrementAndGet() == 0) {
-                progressIndicator.setVisible(false);
-            }
             showExceptionAlert(changeRequestTask.getException());
         });
     }
@@ -1078,9 +1039,6 @@ public class BrowserController implements Initializable {
         });
         
         packagesTask.setOnFailed((t) -> {
-            if (runningTasks.decrementAndGet() == 0) {
-                progressIndicator.setVisible(false);
-            }
             // FIXME: clear?
             packagesListView.getSelectionModel().clearSelection();
             packagesObservableList.clear();
