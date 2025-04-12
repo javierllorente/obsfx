@@ -14,10 +14,6 @@
     -fx-icon-size: 16px;
 }
 
-.menu-item:focused .ikonli-font-icon {
-    -fx-icon-color: white !important;
-}
-
 .progress-indicator {
     -fx-pref-width: 22px;
     -fx-pref-height: 22px;
