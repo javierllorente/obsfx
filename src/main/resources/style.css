@@ -15,8 +15,8 @@
 }
 
 .progress-indicator {
-    -fx-pref-width: 22px;
-    -fx-pref-height: 22px;
+    -fx-pref-width: 18px;
+    -fx-pref-height: 18px;
 }
 
 .code-area .selection {
