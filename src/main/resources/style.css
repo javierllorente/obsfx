@@ -19,6 +19,10 @@
     -fx-pref-height: 22px;
 }
 
+.code-area .selection {
+    -fx-fill: yellow;
+}
+
 #shortcutsTable .column-header-background {
     -fx-max-height: 0;
     -fx-min-height: 0;
