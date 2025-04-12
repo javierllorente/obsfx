@@ -26,10 +26,6 @@ This theme makes makes Modena a bit greener
     -fx-text-fill: white !important;
 }
 
-.menu-item:focused .ikonli-font-icon {
-    -fx-icon-color: white !important;
-}
-
 .text-input {
     -fx-focus-color: -primary-color;
     -fx-highlight-fill: -primary-color;
