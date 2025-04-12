@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Javier Llorente <javier@opensuse.org>
+ * Copyright (C) 2024-2025 Javier Llorente <javier@opensuse.org>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,8 @@ import org.fxmisc.richtext.CodeArea;
  */
 public class LogViewerController implements Initializable {
 
+    private final String notFoundColor = "#ff6666";
+    
     @FXML
     CodeArea codeArea;
     
@@ -58,6 +60,7 @@ public class LogViewerController implements Initializable {
             previousButton.setDisable(false);
             nextButton.setDisable(false);
             notFoundLabel.setVisible(false);
+            searchTextField.setStyle("");
         });
     }
     
@@ -85,6 +88,7 @@ public class LogViewerController implements Initializable {
         previousButton.setDisable(!found);
         nextButton.setDisable(false);
         notFoundLabel.setVisible(!found);
+        searchTextField.setStyle(!found ? "-fx-control-inner-background: " + notFoundColor : "");
                 
         if (!found) {
             codeArea.selectRange(end, end);
@@ -112,6 +116,7 @@ public class LogViewerController implements Initializable {
         previousButton.setDisable(false);
         nextButton.setDisable(!found);
         notFoundLabel.setVisible(!found);
+        searchTextField.setStyle(!found ? "-fx-control-inner-background: " + notFoundColor : "");
          
         if (!found) {
             codeArea.selectRange(start, start);
