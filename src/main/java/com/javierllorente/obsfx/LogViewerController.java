@@ -35,19 +35,19 @@ public class LogViewerController implements Initializable {
     private final String notFoundColor = "#ff6666";
     
     @FXML
-    CodeArea codeArea;
+    private CodeArea codeArea;
     
     @FXML
-    TextField searchTextField;
+    private TextField searchTextField;
     
     @FXML
-    Button previousButton;
+    private Button previousButton;
     
     @FXML
-    Button nextButton;
+    private Button nextButton;
     
     @FXML
-    Label notFoundLabel;
+    private Label notFoundLabel;
     
     /**
      * Initializes the controller class.
