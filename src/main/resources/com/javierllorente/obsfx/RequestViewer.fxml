@@ -15,7 +15,7 @@
 <?import javafx.scene.text.TextFlow?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox prefHeight="800.0" prefWidth="700.0" stylesheets="@/green-modena.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javierllorente.obsfx.RequestViewerController">
+<VBox prefHeight="800.0" prefWidth="700.0" stylesheets="@/green-modena.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javierllorente.obsfx.RequestViewerController">
    <children>
       <GridPane hgap="5.0" vgap="7.0">
          <columnConstraints>

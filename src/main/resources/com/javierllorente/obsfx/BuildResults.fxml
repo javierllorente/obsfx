@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<VBox prefHeight="450.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javierllorente.obsfx.BuildResultsController">
+<VBox prefHeight="450.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javierllorente.obsfx.BuildResultsController">
    <children>
        <TableView fx:id="table" VBox.vgrow="ALWAYS">
            <placeholder>

@@ -17,7 +17,7 @@ icon=$base_dir/src/main/resources/obs.png
 version=${jar_filename:${#name}+1:-4}
 release=0
 
-JAVA_HOME=/usr/lib64/jvm/java-17-openjdk-17
+JAVA_HOME=/usr/lib64/jvm/java-21-openjdk-21
 JAVAFX_HOME=$build_dir/javafx
 jpackage_path=$JAVA_HOME/bin
 module_path=:$JAVAFX_HOME:$lib_dir

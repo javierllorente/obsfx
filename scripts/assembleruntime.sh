@@ -2,7 +2,7 @@
 #
 # Assembles a custom runtime image with the required JavaFX modules
 #
-JAVA_HOME=/usr/lib64/jvm/java-17-openjdk-17
+JAVA_HOME=/usr/lib64/jvm/java-21-openjdk-21
 build_dir=../target
 JAVAFX_HOME=$build_dir/javafx
 jlink_path=$JAVA_HOME/bin/
