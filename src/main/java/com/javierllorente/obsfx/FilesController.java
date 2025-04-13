@@ -21,10 +21,11 @@ import com.javierllorente.obsfx.alert.ConfirmAlert;
 import com.javierllorente.obsfx.util.Utils;
 import jakarta.ws.rs.ClientErrorException;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -127,12 +128,11 @@ public class FilesController extends DataController implements Initializable {
 
         File destinationFile = fileChooser.showSaveDialog(App.getWindow());
         if (destinationFile != null) {
-            File sourceFile = App.getOBS().downloadFile(prj, pkg, fileName);
-            try {
-                Files.copy(sourceFile.toPath(), destinationFile.toPath(), 
-                        StandardCopyOption.REPLACE_EXISTING);
+            InputStream is = App.getOBS().downloadFile(prj, pkg, fileName);
+            try (FileOutputStream outputStream = new FileOutputStream(destinationFile.getAbsolutePath())) {
+                is.transferTo(outputStream);
             } catch (IOException ex) {
-                Logger.getLogger(FilesController.class.getName()).log(Level.SEVERE, null, ex);
+                browserController.showExceptionAlert(ex);
             }
         }
     }
