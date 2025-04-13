@@ -21,7 +21,6 @@ import com.javierllorente.obsfx.alert.ConfirmAlert;
 import com.javierllorente.obsfx.util.Utils;
 import jakarta.ws.rs.ClientErrorException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,8 +30,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -131,7 +128,7 @@ public class FilesController extends DataController implements Initializable {
             InputStream is = App.getOBS().downloadFile(prj, pkg, fileName);
             try (FileOutputStream outputStream = new FileOutputStream(destinationFile.getAbsolutePath())) {
                 is.transferTo(outputStream);
-            } catch (IOException ex) {
+            } catch (IOException | ClientErrorException ex) {
                 browserController.showExceptionAlert(ex);
             }
         }
