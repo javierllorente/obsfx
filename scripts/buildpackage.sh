@@ -20,7 +20,7 @@ release=0
 JAVA_HOME=/usr/lib64/jvm/java-21-openjdk-21
 JAVAFX_HOME=$build_dir/javafx
 jpackage_path=$JAVA_HOME/bin
-module_path=:$JAVAFX_HOME:$lib_dir
+main_class=com.javierllorente.obsfx.App
 runtime_dir=$build_dir/runtime
 java_options='--add-exports javafx.base/com.sun.javafx.event=ALL-UNNAMED'
 
@@ -28,7 +28,9 @@ echo "Assembling runtime..."
 ./assembleruntime.sh
 
 echo "Building package..."
+# Non-modular classpath mode at runtime
 $jpackage_path/jpackage --verbose --type rpm --app-version $version --linux-app-release $release \
 --linux-rpm-license-type $license_type --license-file $license_file \
---input $dist_dir --main-jar $jar_filename --name $name --module-path $module_path --runtime-image $runtime_dir \
+--input $dist_dir --main-jar $jar_filename --name $name \
+--main-jar $jar_filename --main-class $main_class --runtime-image $runtime_dir \
 --java-options "$java_options" --icon $icon --linux-shortcut --linux-menu-group $menu_group --dest $build_dir
