@@ -23,6 +23,14 @@
     -fx-fill: yellow;
 }
 
+.notification-bar > .pane .title {
+    -fx-font-size: 13px;
+}
+
+.notification-bar > .pane .label {
+    -fx-font-size: 13px;
+}
+
 #shortcutsTable .column-header-background {
     -fx-max-height: 0;
     -fx-min-height: 0;

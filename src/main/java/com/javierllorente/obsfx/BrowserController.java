@@ -90,9 +90,11 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.util.Duration;
 import javafx.util.Pair;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
+import org.controlsfx.control.Notifications;
 import org.controlsfx.control.textfield.TextFields;
 
 /**
@@ -805,14 +807,13 @@ public class BrowserController implements Initializable {
                 try (FileOutputStream outputStream = new FileOutputStream(destinationFile.getAbsolutePath())) {
                     InputStream is = downloadTask.getValue();
                     is.transferTo(outputStream);
-                    
-                    Alert alert = new Alert(AlertType.INFORMATION);
-                    alert.initOwner(borderPane.getScene().getWindow());
-                    alert.setTitle(App.getBundle().getString("files.download.completed"));
-                    alert.setHeaderText(null);
-                    alert.setContentText(destinationFile.getName());
-                    alert.showAndWait();
-                    
+
+                    Notifications.create()
+                            .owner(App.getWindow())
+                            .title(App.getBundle().getString("files.download.completed"))
+                            .text(destinationFile.getName())
+                            .hideAfter(Duration.seconds(5))
+                            .showInformation();
                 } catch (IOException ex) {
                     showExceptionAlert(ex);
                 }                
@@ -836,13 +837,13 @@ public class BrowserController implements Initializable {
             }
             filesController.clear();
             startFilesTask(prj, pkg);
-            
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.initOwner(borderPane.getScene().getWindow());
-            alert.setTitle(App.getBundle().getString("files.upload.completed"));
-            alert.setHeaderText(null);
-            alert.setContentText(file.getName());
-            alert.showAndWait();  
+
+            Notifications.create()
+                    .owner(App.getWindow())
+                    .title(App.getBundle().getString("files.upload.completed"))
+                    .text(file.getName())
+                    .hideAfter(Duration.seconds(5))
+                    .showInformation();
         });
         
         uploadTask.setOnFailed((t) -> {
