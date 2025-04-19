@@ -125,12 +125,7 @@ public class FilesController extends DataController implements Initializable {
 
         File destinationFile = fileChooser.showSaveDialog(App.getWindow());
         if (destinationFile != null) {
-            InputStream is = App.getOBS().downloadFile(prj, pkg, fileName);
-            try (FileOutputStream outputStream = new FileOutputStream(destinationFile.getAbsolutePath())) {
-                is.transferTo(outputStream);
-            } catch (IOException | ClientErrorException ex) {
-                browserController.showExceptionAlert(ex);
-            }
+            browserController.startDownloadTask(prj, pkg, fileName, destinationFile);
         }
     }
     

@@ -31,6 +31,7 @@ import com.javierllorente.obsfx.task.BuildLogTask;
 import com.javierllorente.obsfx.task.BuildResultsTask;
 import com.javierllorente.obsfx.task.ChangeRequestTask;
 import com.javierllorente.obsfx.task.DiffTask;
+import com.javierllorente.obsfx.task.DownloadTask;
 import com.javierllorente.obsfx.task.FilesTask;
 import com.javierllorente.obsfx.task.PackagesTask;
 import com.javierllorente.obsfx.task.PkgMetaConfigTask;
@@ -43,6 +44,9 @@ import com.javierllorente.obsfx.task.SearchTask;
 import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.ServerErrorException;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -782,6 +786,40 @@ public class BrowserController implements Initializable {
         
         changeRequestTask.setOnFailed((t) -> {
             showExceptionAlert(changeRequestTask.getException());
+        });
+    }
+    
+    public void startDownloadTask(String prj, String pkg, String fileName, File destinationFile) {
+        DownloadTask downloadTask = new DownloadTask(prj, pkg, fileName);
+        runningTasks.incrementAndGet();
+        progressIndicator.setVisible(true);
+        new Thread(downloadTask).start();
+        
+        downloadTask.setOnSucceeded((t) -> {
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
+
+            if (downloadTask.getValue() != null) {   
+                try (FileOutputStream outputStream = new FileOutputStream(destinationFile.getAbsolutePath())) {
+                    InputStream is = downloadTask.getValue();
+                    is.transferTo(outputStream);
+                    
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.initOwner(borderPane.getScene().getWindow());
+                    alert.setTitle(App.getBundle().getString("files.download.completed"));
+                    alert.setHeaderText(null);
+                    alert.setContentText(destinationFile.getName());
+                    alert.showAndWait();
+                    
+                } catch (IOException ex) {
+                    showExceptionAlert(ex);
+                }                
+            }
+        });
+        
+        downloadTask.setOnFailed((t) -> {
+            showExceptionAlert(downloadTask.getException());
         });
     }
         
