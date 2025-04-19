@@ -14,7 +14,6 @@
    <children>
       <HBox prefHeight="11.0" prefWidth="600.0">
          <children>
-            <Pane HBox.hgrow="ALWAYS" />
             <Button fx:id="downloadButton" mnemonicParsing="false" onAction="#handleDownload">
                <graphic>
                   <FontIcon iconLiteral="icm-download" />
@@ -31,6 +30,7 @@
                   <Insets bottom="10.0" left="2.0" right="2.0" top="10.0" />
                </HBox.margin>
             </Button>
+            <Pane prefWidth="10" />
             <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDelete">
                <graphic>
                   <FontIcon iconLiteral="icm-bin" />
