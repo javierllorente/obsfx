@@ -169,11 +169,10 @@ public class FilesController extends DataController implements Initializable {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            String fileName = filesTable.getSelectionModel().getSelectedItem().getName();
+            FileAdapter selectedItem = filesTable.getSelectionModel().getSelectedItem();
             try {
-                browserController.deleteFile(prj, pkg, fileName);
-                filesTable.getItems().clear();
-                browserController.startFilesTask(prj, pkg);
+                browserController.deleteFile(prj, pkg, selectedItem.getName());
+                filesTable.getItems().remove(selectedItem);
             } catch (ClientErrorException ex) {
                 browserController.showExceptionAlert(ex);
             }
@@ -185,7 +184,7 @@ public class FilesController extends DataController implements Initializable {
         filesTable.sort();
         dataLoaded = true;
     }
-
+    
     public String getPrj() {
         return prj;
     }
