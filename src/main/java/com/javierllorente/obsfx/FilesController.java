@@ -135,14 +135,8 @@ public class FilesController extends DataController implements Initializable {
         fileChooser.setTitle(App.getBundle().getString("files.upload.select"));
   
         File selectedFile = fileChooser.showOpenDialog(App.getWindow());
-        if (selectedFile != null) {
-            try {
-                browserController.uploadFile(prj, pkg, selectedFile);
-                filesTable.getItems().clear();
-                browserController.startFilesTask(prj, pkg);
-            } catch (ClientErrorException ex) {
-                browserController.showExceptionAlert(ex);
-            }
+        if (selectedFile != null) {            
+            browserController.startUploadTask(prj, pkg, selectedFile);
         }
     }
     

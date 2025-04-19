@@ -41,6 +41,7 @@ import com.javierllorente.obsfx.task.ProjectsTask;
 import com.javierllorente.obsfx.task.PackageRequestsTask;
 import com.javierllorente.obsfx.task.RevisionsTask;
 import com.javierllorente.obsfx.task.SearchTask;
+import com.javierllorente.obsfx.task.UploadTask;
 import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.ServerErrorException;
 import java.io.File;
@@ -822,14 +823,31 @@ public class BrowserController implements Initializable {
             showExceptionAlert(downloadTask.getException());
         });
     }
-        
-    public void uploadFile(String prj, String pkg, File file) {
+    
+    public void startUploadTask(String prj, String pkg, File file) {
+        UploadTask uploadTask = new UploadTask(prj, pkg, file);
         runningTasks.incrementAndGet();
         progressIndicator.setVisible(true);
-        App.getOBS().uploadFile(prj, pkg, file);
-        if (runningTasks.decrementAndGet() == 0) {
-            progressIndicator.setVisible(false);
-        }
+        new Thread(uploadTask).start();
+        
+        uploadTask.setOnSucceeded((t) -> {
+            if (runningTasks.decrementAndGet() == 0) {
+                progressIndicator.setVisible(false);
+            }
+            filesController.clear();
+            startFilesTask(prj, pkg);
+            
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.initOwner(borderPane.getScene().getWindow());
+            alert.setTitle(App.getBundle().getString("files.upload.completed"));
+            alert.setHeaderText(null);
+            alert.setContentText(file.getName());
+            alert.showAndWait();  
+        });
+        
+        uploadTask.setOnFailed((t) -> {
+            showExceptionAlert(uploadTask.getException());
+        });
     }
     
     public void deleteFile(String prj, String pkg, String fileName){
