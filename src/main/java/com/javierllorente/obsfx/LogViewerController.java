@@ -22,7 +22,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import org.controlsfx.control.textfield.CustomTextField;
 import org.fxmisc.richtext.CodeArea;
 
 /**
@@ -38,7 +38,7 @@ public class LogViewerController implements Initializable {
     private CodeArea codeArea;
     
     @FXML
-    private TextField searchTextField;
+    private CustomTextField searchTextField;
     
     @FXML
     private Button previousButton;

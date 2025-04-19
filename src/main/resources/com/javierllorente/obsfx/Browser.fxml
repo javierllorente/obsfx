@@ -72,7 +72,7 @@
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
-            <ToolBar prefHeight="50.0" prefWidth="200.0">
+            <ToolBar fx:id="toolBar" prefHeight="50.0" prefWidth="200.0">
                 <items>
                     <Button fx:id="homeButton" mnemonicParsing="false" onAction="#goHome" text="%bar.home">
                         <graphic>
