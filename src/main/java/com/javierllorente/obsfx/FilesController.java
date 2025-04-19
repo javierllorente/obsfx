@@ -21,9 +21,6 @@ import com.javierllorente.obsfx.alert.ConfirmAlert;
 import com.javierllorente.obsfx.util.Utils;
 import jakarta.ws.rs.ClientErrorException;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,7 +37,9 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.TransferMode;
 import javafx.stage.FileChooser;
 
 /**
@@ -75,6 +74,26 @@ public class FilesController extends DataController implements Initializable {
         BooleanBinding noSelection = filesTable.getSelectionModel().selectedItemProperty().isNull();
         downloadButton.disableProperty().bind(noSelection);
         deleteButton.disableProperty().bind(noSelection);
+        
+        filesTable.setOnDragOver((t) -> {
+            if (t.getGestureSource() != filesTable && t.getDragboard().hasFiles()) {
+                t.acceptTransferModes(TransferMode.COPY);
+            }
+            t.consume();
+        });
+        
+        filesTable.setOnDragDropped((t) -> {
+            Dragboard dragBoard = t.getDragboard();
+            boolean success = false;
+            if (dragBoard.hasFiles()) {
+                dragBoard.getFiles().forEach((file) -> {
+                    browserController.startUploadTask(prj, pkg, file);                    
+                });                
+                success = true;
+            }
+            t.setDropCompleted(success);
+            t.consume();
+        });
         
         filesTable.setOnKeyPressed((t) -> {
             if (t.getCode() == KeyCode.DELETE) {
@@ -165,7 +184,7 @@ public class FilesController extends DataController implements Initializable {
         files.stream().map(FileAdapter::new).forEach(filesTable.getItems()::add);
         filesTable.sort();
         dataLoaded = true;
-    }    
+    }
 
     public String getPrj() {
         return prj;
