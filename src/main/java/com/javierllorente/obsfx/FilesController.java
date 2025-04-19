@@ -35,8 +35,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
@@ -132,7 +134,38 @@ public class FilesController extends DataController implements Initializable {
                 }
             };
             return tableCell;
-        });        
+        });
+        
+        filesTable.setRowFactory((p) -> {
+            TableRow<FileAdapter> row = new TableRow<>();
+            final FileAdapter[] item = {null};
+
+            row.setOnDragDetected((t) -> {
+                Dragboard dragboard = row.startDragAndDrop(TransferMode.COPY);
+                ClipboardContent content = new ClipboardContent();
+                content.putString("");
+                dragboard.setContent(content);
+                
+                if (!row.isEmpty()) {
+                    item[0] = row.getItem();
+                    t.consume();
+                }
+            });            
+            
+            row.setOnDragDone((t) -> {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle(App.getBundle().getString("files.download.save_as"));
+                fileChooser.setInitialFileName(item[0].getName());
+
+                File destinationFile = fileChooser.showSaveDialog(App.getWindow());
+                if (destinationFile != null) {
+                    browserController.startDownloadTask(prj, pkg, item[0].getName(), destinationFile);
+                }
+                t.consume();
+            });
+            
+            return row;
+        });
     }
     
     @FXML
