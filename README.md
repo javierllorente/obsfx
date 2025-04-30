@@ -14,6 +14,7 @@ There are three versions:
 - rpm package (Linux). Ships with a minimal Java/JavaFX runtime for Linux.
 - jre zip (Linux). Ships with a minimal Java/JavaFX runtime for Linux.
 - non-jre zip (Any OS). Requires the Java/JavaFX runtime for your OS.
+
 Download it at [Releases](/../../releases)
 
 License
